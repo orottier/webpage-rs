@@ -2,22 +2,70 @@ extern crate curl;
 use curl::easy::Easy;
 
 use std::str;
-use std::io::{stdout, Write};
 
-pub fn fetch(url : &str) -> () {
-    let mut easy = Easy::new();
-    easy.url(url).unwrap();
+pub struct TCP {
+    pub ip: String,
+}
 
-    easy.header_function(|header| {
-        print!("header: {}", str::from_utf8(header).unwrap());
-        true
-    }).unwrap();
+pub struct HTTP {
+    pub content_type: String,
+    pub headers: Vec<String>,
+    pub body: String,
+}
 
-    easy.write_function(|data| {
-        Ok(stdout().write(data).unwrap())
-    }).unwrap();
+pub struct HTML {
+    pub title: String,
+}
 
-    easy.perform().unwrap();
+pub struct Webpage {
+    pub tcp: TCP,
+    pub http: HTTP,
+    pub html: HTML,
+}
+
+pub fn fetch(url : &str) -> Webpage {
+    let mut handle = Easy::new();
+
+    // configure
+    handle.timeout(std::time::Duration::from_secs(10)).unwrap();
+    handle.follow_location(true).unwrap();
+    handle.max_redirections(5).unwrap();
+    handle.useragent("Webpage - rust crate").unwrap();
+
+    handle.url(url).unwrap();
+
+    let mut headers = Vec::new();
+    let mut body = Vec::new();
+    {
+        let mut transfer = handle.transfer();
+        transfer.header_function(|new_data| {
+            headers.push(String::from_utf8_lossy(new_data).into_owned());
+            true
+        }).unwrap();
+
+        transfer.write_function(|new_data| {
+            body.extend_from_slice(new_data);
+            Ok(new_data.len())
+        }).unwrap();
+
+        transfer.perform().unwrap();
+    }
+
+    let tcp = TCP {
+        ip: handle.primary_ip().unwrap().unwrap().to_string(),
+    };
+    let http = HTTP {
+        content_type: handle.content_type().unwrap().unwrap().to_string(),
+        headers,
+        body: String::from_utf8_lossy(&body).into_owned(),
+    };
+    let html = HTML {
+        title: "Title".to_string(),
+    };
+
+    Webpage {
+        tcp, http, html
+    }
 }
 
 #[cfg(test)]
