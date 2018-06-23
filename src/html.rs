@@ -1,18 +1,27 @@
 
-use html5ever::parse_document;
+use html5ever::{parse_document, Attribute};
 
-use std::io;
 use std::default::Default;
 use html5ever::driver::ParseOpts;
 use html5ever::rcdom::{NodeData, RcDom, Handle};
 use html5ever::tendril::{Tendril, fmt::UTF8, TendrilSink};
 
 pub struct HTML {
-    pub title: String,
+    pub title: Option<String>,
+    pub description: Option<String>,
+    pub url: Option<String>,
 }
 
 impl HTML {
-    pub fn from_string(html: String) -> Option<Self> {
+    fn empty(url: &str) -> Self {
+        Self {
+            title: None,
+            description: None,
+            url: Some(url.to_string()),
+        }
+    }
+
+    pub fn from_string(html: String, url: &str) -> Option<Self> {
         let opts = ParseOpts {
             ..Default::default()
         };
@@ -20,34 +29,41 @@ impl HTML {
             .from_utf8()
             .read_from(&mut html.as_bytes())
             .and_then(|dom| {
-                if let Some(title) = find_title(dom.document) {
-                    Ok(Self {
-                        title,
-                    })
-                } else {
-                    Err(io::Error::new(io::ErrorKind::Other, "No title found"))
-                }
+                let mut html = Self::empty(url);
+                traverse(dom.document, &mut html);
+
+                Ok(html)
             }).ok()
     }
 }
 
-fn find_title(handle: Handle) -> Option<String> {
+fn traverse(handle: Handle, html: &mut HTML) -> () {
     match handle.data {
         NodeData::Document
             => (),
 
         NodeData::Doctype { .. }
-            => return None,
+            => (),
 
         NodeData::Text { .. }
-            => return None,
+            => (),
 
         NodeData::Comment { .. }
-            => return None,
+            => (),
 
         NodeData::Element { ref name, ref attrs, .. } => {
             if name.local.as_ref() == "title" {
-                return text_content(&handle);
+                html.title = text_content(&handle);
+            }
+            if name.local.as_ref() == "meta" {
+                if get_attribute(&attrs.borrow(), "name").unwrap_or("".to_string()) == "description" {
+                    html.description = get_attribute(&attrs.borrow(), "content");
+                }
+            }
+            if name.local.as_ref() == "link" {
+                if get_attribute(&attrs.borrow(), "rel").unwrap_or("".to_string()) == "canonical" {
+                    html.url = get_attribute(&attrs.borrow(), "href");
+                }
             }
         }
 
@@ -55,12 +71,15 @@ fn find_title(handle: Handle) -> Option<String> {
     }
 
     for child in handle.children.borrow().iter() {
-        if let Some(title) = find_title(child.clone()) {
-            return Some(title);
-        }
+        traverse(child.clone(), html);
     }
+}
 
-    None
+fn get_attribute(attrs: &Vec<Attribute>, name: &str) -> Option<String> {
+    attrs.iter()
+        .filter(|attr| attr.name.local.as_ref() == name)
+        .nth(0)
+        .and_then(|attr| Some(attr.value.trim().to_string()))
 }
 
 fn text_content(handle: &Handle) -> Option<String> {
@@ -68,7 +87,7 @@ fn text_content(handle: &Handle) -> Option<String> {
     for child in handle.children.borrow().iter() {
         if let NodeData::Text { ref contents } = child.data {
             let string = tendril_to_utf8(&contents.borrow()).to_string();
-            return Some(string.to_string());
+            return Some(string.trim().to_string());
         }
     }
 

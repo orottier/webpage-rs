@@ -15,6 +15,7 @@ pub struct TCP {
 pub struct HTTP {
     pub content_type: String,
     pub headers: Vec<String>,
+    pub url: String,
     pub body: String,
 }
 
@@ -56,12 +57,14 @@ pub fn fetch(url : &str) -> Webpage {
     let tcp = TCP {
         ip: handle.primary_ip().unwrap().unwrap().to_string(),
     };
+    let effective_url = handle.effective_url().unwrap().unwrap().to_string();
+    let html = HTML::from_string(body.clone(), &effective_url);
     let http = HTTP {
         content_type: handle.content_type().unwrap().unwrap().to_string(),
         headers,
-        body: body.clone(),
+        url: effective_url,
+        body: body,
     };
-    let html = HTML::from_string(body);
 
     Webpage {
         tcp, http, html
