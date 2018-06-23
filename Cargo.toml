@@ -1,0 +1,7 @@
+[package]
+name = "webpage"
+version = "0.1.0"
+authors = ["Otto <otto@ot-to.nl>"]
+
+[dependencies]
+curl = "0.4.12"
