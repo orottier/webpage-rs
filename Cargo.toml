@@ -5,3 +5,4 @@ authors = ["Otto <otto@ot-to.nl>"]
 
 [dependencies]
 curl = "0.4.12"
+html5ever = "0.22.3"
