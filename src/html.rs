@@ -1,7 +1,8 @@
-
 use html5ever::{parse_document, Attribute};
 
+use std::path::Path;
 use std::default::Default;
+
 use html5ever::driver::ParseOpts;
 use html5ever::rcdom::{NodeData, RcDom, Handle};
 use html5ever::tendril::{Tendril, fmt::UTF8, TendrilSink};
@@ -18,17 +19,36 @@ pub struct HTML {
 }
 
 impl HTML {
-    pub fn empty(url: &str) -> Self {
+    pub fn empty(url: Option<String>) -> Self {
         Self {
             title: None,
             description: None,
-            url: Some(url.to_string()),
+            url,
 
             opengraph: Opengraph::empty(),
         }
     }
 
-    pub fn from_string(html: String, url: &str) -> Option<Self> {
+    fn from_dom(dom: RcDom, url: Option<String>) -> Self {
+        let mut html = Self::empty(url);
+        traverse(dom.document, &mut html);
+
+        html
+    }
+
+    pub fn from_file(path: &str) -> Option<Self> {
+        let opts = ParseOpts {
+            ..Default::default()
+        };
+        parse_document(RcDom::default(), opts)
+            .from_utf8()
+            .from_file(Path::new(path))
+            .and_then(|dom| {
+                Ok(Self::from_dom(dom, None))
+            }).ok()
+    }
+
+    pub fn from_string(html: String, url: Option<String>) -> Option<Self> {
         let opts = ParseOpts {
             ..Default::default()
         };
@@ -36,10 +56,7 @@ impl HTML {
             .from_utf8()
             .read_from(&mut html.as_bytes())
             .and_then(|dom| {
-                let mut html = Self::empty(url);
-                traverse(dom.document, &mut html);
-
-                Ok(html)
+                Ok(Self::from_dom(dom, url))
             }).ok()
     }
 }
