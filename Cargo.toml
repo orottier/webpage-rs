@@ -2,7 +2,7 @@
 name = "webpage"
 description = "Small library to fetch info about a web page"
 readme = "README.md"
-keywords = ["webpage", "opengraph"]
+keywords = ["webpage", "html", "opengraph"]
 license = "MIT"
 version = "0.1.0"
 authors = ["Otto <otto@ot-to.nl>"]

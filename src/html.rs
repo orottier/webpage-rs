@@ -14,7 +14,7 @@ pub struct HTML {
     pub title: Option<String>,
     pub description: Option<String>,
     pub url: Option<String>,
-    pub text: String,
+    pub text_content: String,
 
     pub opengraph: Opengraph,
 }
@@ -30,7 +30,7 @@ impl HTML {
             title: None,
             description: None,
             url,
-            text: String::new(),
+            text_content: String::new(),
 
             opengraph: Opengraph::empty(),
         }
@@ -82,7 +82,7 @@ fn traverse(handle: Handle, state: ParserState, html: &mut HTML) -> () {
             if in_body {
                 if let Some(NodeData::Element { ref name, .. }) = state.parent {
                     if name.local.as_ref() != "style" && name.local.as_ref() != "script" {
-                        html.text.push_str(tendril_to_utf8(&contents.borrow()));
+                        html.text_content.push_str(tendril_to_utf8(&contents.borrow()));
                     }
                 }
             }

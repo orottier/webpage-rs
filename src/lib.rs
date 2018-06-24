@@ -11,8 +11,8 @@ use html::HTML;
 use std::str;
 
 pub struct Webpage {
-    pub http: Option<HTTP>,
-    pub html: Option<HTML>,
+    pub http: Option<HTTP>, // info about the HTTP transfer, if any
+    pub html: Option<HTML>, // info from the parsed HTML doc, if any
 }
 
 impl Webpage {

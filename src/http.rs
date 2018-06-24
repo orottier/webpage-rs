@@ -5,7 +5,7 @@ pub struct HTTP {
     pub ip: String,
     pub content_type: String,
     pub headers: Vec<String>,
-    pub url: String,
+    pub url: String, // effective url
     pub body: String,
 }
 
