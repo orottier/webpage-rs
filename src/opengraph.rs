@@ -64,3 +64,30 @@ fn parse_object(og_type: &str, property: &str, content: String, collection: &mut
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::Opengraph;
+
+    #[test]
+    fn test_type() {
+        let mut opengraph = Opengraph::empty();
+        assert_eq!(opengraph.og_type, "website");
+
+        opengraph.extend("type", "article".to_string());
+        assert_eq!(opengraph.og_type, "article");
+    }
+
+    #[test]
+    fn test_image() {
+        let mut opengraph = Opengraph::empty();
+
+        opengraph.extend("image", "http://example.org/image.png".to_string());
+        opengraph.extend("image:secure_url", "https://example.org/image.png".to_string());
+        assert_eq!(opengraph.images.len(), 1);
+        assert_eq!(opengraph.images[0].url, "http://example.org/image.png");
+
+        let prop = opengraph.images[0].properties.get("secure_url");
+        assert!(prop.is_some());
+        assert_eq!(prop.unwrap(), "https://example.org/image.png");
+    }
+}
