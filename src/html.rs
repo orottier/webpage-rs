@@ -6,18 +6,49 @@ use html5ever::driver::ParseOpts;
 use html5ever::rcdom::{NodeData, RcDom, Handle};
 use html5ever::tendril::{Tendril, fmt::UTF8, TendrilSink};
 
+use std::collections::HashMap;
+
+#[derive(Debug)]
+pub struct Opengraph {
+    pub og_type: String,
+    pub properties: HashMap<String, String>,
+
+    // todo
+    pub images: Vec<String>,
+    pub videos: Vec<String>,
+    pub audios: Vec<String>,
+}
+
+#[derive(Debug)]
 pub struct HTML {
     pub title: Option<String>,
     pub description: Option<String>,
     pub url: Option<String>,
+
+    pub opengraph: Opengraph,
+}
+
+impl Opengraph {
+    pub fn empty() -> Self {
+        Self {
+            og_type: "website".to_string(),
+            properties: HashMap::new(),
+
+            images: vec![],
+            videos: vec![],
+            audios: vec![],
+        }
+    }
 }
 
 impl HTML {
-    fn empty(url: &str) -> Self {
+    pub fn empty(url: &str) -> Self {
         Self {
             title: None,
             description: None,
             url: Some(url.to_string()),
+
+            opengraph: Opengraph::empty(),
         }
     }
 
@@ -39,25 +70,34 @@ impl HTML {
 
 fn traverse(handle: Handle, html: &mut HTML) -> () {
     match handle.data {
-        NodeData::Document
-            => (),
-
-        NodeData::Doctype { .. }
-            => (),
-
-        NodeData::Text { .. }
-            => (),
-
-        NodeData::Comment { .. }
-            => (),
+        NodeData::Document => (),
+        NodeData::Doctype { .. } => (),
+        NodeData::Text { .. } => (),
+        NodeData::Comment { .. } => (),
 
         NodeData::Element { ref name, ref attrs, .. } => {
             if name.local.as_ref() == "title" {
                 html.title = text_content(&handle);
             }
             if name.local.as_ref() == "meta" {
-                if get_attribute(&attrs.borrow(), "name").unwrap_or("".to_string()) == "description" {
-                    html.description = get_attribute(&attrs.borrow(), "content");
+                let property = get_attribute(&attrs.borrow(), "property")
+                    .unwrap_or(get_attribute(&attrs.borrow(), "name")
+                        .unwrap_or("".to_string())
+                    );
+
+                if property == "description" {
+                    let content = get_attribute(&attrs.borrow(), "content");
+                    html.description = content;
+                } else if property.starts_with("og:") && property.len() > 3 {
+                    let content = get_attribute(&attrs.borrow(), "content");
+                    if let Some(content) = content {
+                        if property == "og:type" {
+                            html.opengraph.og_type = content;
+                        } else {
+                            let property = &property[3..];
+                            html.opengraph.properties.insert(property.to_string(), content);
+                        }
+                    }
                 }
             }
             if name.local.as_ref() == "link" {
