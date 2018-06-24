@@ -4,13 +4,14 @@ use webpage::Webpage;
 
 #[test]
 fn from_string() {
-    let input = "<html><head><title>Hello</title>";
+    let input = "<html><head><title>Hello</title></head><body>Contents";
     let webpage = Webpage::from_string(input);
     assert!(webpage.html.is_some());
 
     let html = webpage.html.unwrap();
     assert_eq!(html.title, Some("Hello".to_string()));
     assert!(html.description.is_none());
+    assert_eq!(html.text, "Contents".to_string());
 }
 
 #[test]

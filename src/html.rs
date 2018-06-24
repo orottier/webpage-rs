@@ -14,8 +14,14 @@ pub struct HTML {
     pub title: Option<String>,
     pub description: Option<String>,
     pub url: Option<String>,
+    pub text: String,
 
     pub opengraph: Opengraph,
+}
+
+struct ParserState<'a> {
+    in_body: bool,
+    parent: Option<&'a NodeData>,
 }
 
 impl HTML {
@@ -24,6 +30,7 @@ impl HTML {
             title: None,
             description: None,
             url,
+            text: String::new(),
 
             opengraph: Opengraph::empty(),
         }
@@ -31,7 +38,11 @@ impl HTML {
 
     fn from_dom(dom: RcDom, url: Option<String>) -> Self {
         let mut html = Self::empty(url);
-        traverse(dom.document, &mut html);
+        let state = ParserState {
+            in_body: false,
+            parent: None,
+        };
+        traverse(dom.document, state, &mut html);
 
         html
     }
@@ -61,14 +72,29 @@ impl HTML {
     }
 }
 
-fn traverse(handle: Handle, html: &mut HTML) -> () {
+fn traverse(handle: Handle, state: ParserState, html: &mut HTML) -> () {
+    let mut in_body = state.in_body;
+
     match handle.data {
         NodeData::Document => (),
         NodeData::Doctype { .. } => (),
-        NodeData::Text { .. } => (),
+        NodeData::Text { ref contents } => {
+            if in_body {
+                if let Some(NodeData::Element { ref name, .. }) = state.parent {
+                    if name.local.as_ref() != "style" && name.local.as_ref() != "script" {
+                        html.text.push_str(tendril_to_utf8(&contents.borrow()));
+                    }
+                }
+            }
+            return;
+        },
         NodeData::Comment { .. } => (),
 
         NodeData::Element { ref name, ref attrs, .. } => {
+            if name.local.as_ref() == "body" {
+                in_body = true;
+            }
+
             if name.local.as_ref() == "title" {
                 html.title = text_content(&handle);
             }
@@ -99,7 +125,11 @@ fn traverse(handle: Handle, html: &mut HTML) -> () {
     }
 
     for child in handle.children.borrow().iter() {
-        traverse(child.clone(), html);
+        let new_state = ParserState {
+            in_body,
+            parent: Some(&handle.data),
+        };
+        traverse(child.clone(), new_state, html);
     }
 }
 
