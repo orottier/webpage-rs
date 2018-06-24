@@ -39,8 +39,11 @@ pub struct Webpage {
 
 pub struct HTTP {
     pub ip: String,
+    pub transfer_time: Duration,
+    pub redirect_count: u32,
     pub content_type: String,
-    pub headers: Vec<String>,
+    pub response_code: u32,
+    pub headers: Vec<String>, // raw headers from final request
     pub url: String, // effective url
     pub body: String,
 }
@@ -49,8 +52,11 @@ pub struct HTML {
     pub title: Option<String>,
     pub description: Option<String>,
     pub url: Option<String>,
-    pub text_content: String,
 
+    pub language: Option<String>, // as specified, not detected
+    pub text_content: String, // all tags stripped from body
+
+    pub meta: HashMap<String, String>, // flattened down list of meta properties
     pub opengraph: Opengraph,
 }
 
@@ -63,7 +69,7 @@ pub struct Opengraph {
     pub audios: Vec<Object>,
 }
 
-pub struct Object {
+pub struct OpengraphObject {
     pub url: String,
     pub properties: HashMap<String, String>,
 }

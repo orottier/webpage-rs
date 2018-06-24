@@ -2,6 +2,7 @@ use html5ever::{parse_document, Attribute};
 
 use std::path::Path;
 use std::default::Default;
+use std::collections::HashMap;
 
 use html5ever::driver::ParseOpts;
 use html5ever::rcdom::{NodeData, RcDom, Handle};
@@ -14,13 +15,22 @@ pub struct HTML {
     pub title: Option<String>,
     pub description: Option<String>,
     pub url: Option<String>,
-    pub text_content: String,
 
+    pub language: Option<String>, // as specified, not detected
+    pub text_content: String, // all tags stripped from body
+
+    pub meta: HashMap<String, String>, // flattened down list of meta properties
     pub opengraph: Opengraph,
 }
 
+#[derive(Copy, Clone)]
+enum Segment {
+    None,
+    Head,
+    Body,
+}
 struct ParserState<'a> {
-    in_body: bool,
+    segment: Segment,
     parent: Option<&'a NodeData>,
 }
 
@@ -30,8 +40,11 @@ impl HTML {
             title: None,
             description: None,
             url,
+
+            language: None,
             text_content: String::new(),
 
+            meta: HashMap::new(),
             opengraph: Opengraph::empty(),
         }
     }
@@ -39,7 +52,7 @@ impl HTML {
     fn from_dom(dom: RcDom, url: Option<String>) -> Self {
         let mut html = Self::empty(url);
         let state = ParserState {
-            in_body: false,
+            segment: Segment::None,
             parent: None,
         };
         traverse(dom.document, state, &mut html);
@@ -73,13 +86,13 @@ impl HTML {
 }
 
 fn traverse(handle: Handle, state: ParserState, html: &mut HTML) -> () {
-    let mut in_body = state.in_body;
+    let mut segment = state.segment;
 
     match handle.data {
         NodeData::Document => (),
         NodeData::Doctype { .. } => (),
         NodeData::Text { ref contents } => {
-            if in_body {
+            if let Segment::Body = segment {
                 if let Some(NodeData::Element { ref name, .. }) = state.parent {
                     if name.local.as_ref() != "style" && name.local.as_ref() != "script" {
                         html.text_content.push_str(tendril_to_utf8(&contents.borrow()));
@@ -91,32 +104,51 @@ fn traverse(handle: Handle, state: ParserState, html: &mut HTML) -> () {
         NodeData::Comment { .. } => (),
 
         NodeData::Element { ref name, ref attrs, .. } => {
-            if name.local.as_ref() == "body" {
-                in_body = true;
+            let tag_name = name.local.as_ref();
+
+            if tag_name == "head" {
+                segment = Segment::Head;
+            } else if tag_name == "body" {
+                segment = Segment::Body;
             }
 
-            if name.local.as_ref() == "title" {
-                html.title = text_content(&handle);
-            }
-            if name.local.as_ref() == "meta" {
-                let property = get_attribute(&attrs.borrow(), "property")
-                    .unwrap_or(get_attribute(&attrs.borrow(), "name")
-                        .unwrap_or("".to_string())
-                    );
-
-                if property == "description" {
-                    let content = get_attribute(&attrs.borrow(), "content");
-                    html.description = content;
-                } else if property.starts_with("og:") && property.len() > 3 {
-                    let content = get_attribute(&attrs.borrow(), "content");
-                    if let Some(content) = content {
-                        html.opengraph.extend(&property[3..], content);
-                    }
+            if tag_name == "html" || tag_name == "body" {
+                let language = get_attribute(&attrs.borrow(), "lang");
+                if language.is_some() {
+                    html.language = language;
                 }
             }
-            if name.local.as_ref() == "link" {
-                if get_attribute(&attrs.borrow(), "rel").unwrap_or("".to_string()) == "canonical" {
-                    html.url = get_attribute(&attrs.borrow(), "href");
+
+            if let Segment::Head = segment {
+                if tag_name == "title" {
+                    html.title = text_content(&handle);
+                }
+                if tag_name == "meta" {
+                    let content = get_attribute(&attrs.borrow(), "content");
+                    if let Some(content) = content {
+                        let property_opt = get_attribute(&attrs.borrow(), "property")
+                            .or(get_attribute(&attrs.borrow(), "name"))
+                            .or(get_attribute(&attrs.borrow(), "http-equiv"));
+
+                        if let Some(property) = property_opt {
+                            html.meta.insert(property.clone(), content.clone());
+
+                            if property.starts_with("og:") && property.len() > 3 {
+                                html.opengraph.extend(&property[3..], content);
+                            } else if property == "description" {
+                                html.description = Some(content);
+                            }
+                        }
+                    }
+
+                    if let Some(charset) = get_attribute(&attrs.borrow(), "charset") {
+                        html.meta.insert("charset".to_string(), charset);
+                    }
+                }
+                if tag_name == "link" {
+                    if get_attribute(&attrs.borrow(), "rel").unwrap_or("".to_string()) == "canonical" {
+                        html.url = get_attribute(&attrs.borrow(), "href");
+                    }
                 }
             }
         }
@@ -126,7 +158,7 @@ fn traverse(handle: Handle, state: ParserState, html: &mut HTML) -> () {
 
     for child in handle.children.borrow().iter() {
         let new_state = ParserState {
-            in_body,
+            segment,
             parent: Some(&handle.data),
         };
         traverse(child.clone(), new_state, html);

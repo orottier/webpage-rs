@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 #[derive(Debug)]
-pub struct Object {
+pub struct OpengraphObject {
     pub url: String,
     pub properties: HashMap<String, String>,
 }
@@ -11,12 +11,12 @@ pub struct Opengraph {
     pub og_type: String,
     pub properties: HashMap<String, String>,
 
-    pub images: Vec<Object>,
-    pub videos: Vec<Object>,
-    pub audios: Vec<Object>,
+    pub images: Vec<OpengraphObject>,
+    pub videos: Vec<OpengraphObject>,
+    pub audios: Vec<OpengraphObject>,
 }
 
-impl Object {
+impl OpengraphObject {
     pub fn new(url: String) -> Self {
         Self {
             url,
@@ -52,11 +52,11 @@ impl Opengraph {
     }
 }
 
-fn parse_object(og_type: &str, property: &str, content: String, collection: &mut Vec<Object>) -> () {
+fn parse_object(og_type: &str, property: &str, content: String, collection: &mut Vec<OpengraphObject>) -> () {
     let num_images = collection.len();
 
     if property == og_type || &property[og_type.len()..] == ":url" {
-        collection.push(Object::new(content));
+        collection.push(OpengraphObject::new(content));
     } else if num_images > 0 && property.len() > og_type.len() + 1 {
         let property = &property["image:".len()..];
         collection[num_images - 1]
