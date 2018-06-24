@@ -4,7 +4,7 @@ _Get some info about a webpage_
 
 ## Usage
 
-```
+```rust
 extern crate webpage;
 use webpage::Webpage;
 
