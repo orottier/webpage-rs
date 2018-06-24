@@ -6,18 +6,7 @@ use html5ever::driver::ParseOpts;
 use html5ever::rcdom::{NodeData, RcDom, Handle};
 use html5ever::tendril::{Tendril, fmt::UTF8, TendrilSink};
 
-use std::collections::HashMap;
-
-#[derive(Debug)]
-pub struct Opengraph {
-    pub og_type: String,
-    pub properties: HashMap<String, String>,
-
-    // todo
-    pub images: Vec<String>,
-    pub videos: Vec<String>,
-    pub audios: Vec<String>,
-}
+use opengraph::Opengraph;
 
 #[derive(Debug)]
 pub struct HTML {
@@ -26,19 +15,6 @@ pub struct HTML {
     pub url: Option<String>,
 
     pub opengraph: Opengraph,
-}
-
-impl Opengraph {
-    pub fn empty() -> Self {
-        Self {
-            og_type: "website".to_string(),
-            properties: HashMap::new(),
-
-            images: vec![],
-            videos: vec![],
-            audios: vec![],
-        }
-    }
 }
 
 impl HTML {
@@ -91,12 +67,7 @@ fn traverse(handle: Handle, html: &mut HTML) -> () {
                 } else if property.starts_with("og:") && property.len() > 3 {
                     let content = get_attribute(&attrs.borrow(), "content");
                     if let Some(content) = content {
-                        if property == "og:type" {
-                            html.opengraph.og_type = content;
-                        } else {
-                            let property = &property[3..];
-                            html.opengraph.properties.insert(property.to_string(), content);
-                        }
+                        html.opengraph.extend(&property[3..], content);
                     }
                 }
             }

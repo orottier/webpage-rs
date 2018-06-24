@@ -4,6 +4,8 @@ use curl::easy::Easy;
 extern crate html5ever;
 
 mod html;
+mod opengraph;
+
 use html::HTML;
 
 use std::str;
