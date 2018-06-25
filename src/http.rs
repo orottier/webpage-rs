@@ -1,5 +1,6 @@
 use curl::easy::Easy;
 use std::time::Duration;
+use std::io;
 
 #[derive(Debug)]
 pub struct HTTP {
@@ -14,16 +15,16 @@ pub struct HTTP {
 }
 
 impl HTTP {
-    pub fn fetch(url: &str) -> Self {
+    pub fn fetch(url: &str) -> Result<Self, io::Error> {
         let mut handle = Easy::new();
 
         // configure
-        handle.timeout(Duration::from_secs(10)).unwrap();
-        handle.follow_location(true).unwrap();
-        handle.max_redirections(5).unwrap();
-        handle.useragent("Webpage - rust crate").unwrap();
+        handle.timeout(Duration::from_secs(10))?;
+        handle.follow_location(true)?;
+        handle.max_redirections(5)?;
+        handle.useragent("Webpage - rust crate")?;
 
-        handle.url(url).unwrap();
+        handle.url(url)?;
 
         let mut headers = Vec::new();
         let mut body = Vec::new();
@@ -43,28 +44,28 @@ impl HTTP {
                 }
 
                 true
-            }).unwrap();
+            })?;
 
             transfer.write_function(|new_data| {
                 body.extend_from_slice(new_data);
                 Ok(new_data.len())
-            }).unwrap();
+            })?;
 
-            transfer.perform().unwrap();
+            transfer.perform()?;
         }
 
         let body = String::from_utf8_lossy(&body).into_owned();
 
-        HTTP {
-            ip: handle.primary_ip().unwrap().unwrap().to_string(),
-            transfer_time: handle.total_time().unwrap(),
-            redirect_count: handle.redirect_count().unwrap(),
-            content_type: handle.content_type().unwrap().unwrap().to_string(),
-            response_code: handle.response_code().unwrap(),
-            url: handle.effective_url().unwrap().unwrap().to_string(),
+        Ok(HTTP {
+            ip: handle.primary_ip()?.unwrap_or("").to_string(),
+            transfer_time: handle.total_time()?,
+            redirect_count: handle.redirect_count()?,
+            content_type: handle.content_type()?.unwrap_or("").to_string(),
+            response_code: handle.response_code()?,
+            url: handle.effective_url()?.unwrap_or("").to_string(),
 
             headers,
             body: body,
-        }
+        })
     }
 }

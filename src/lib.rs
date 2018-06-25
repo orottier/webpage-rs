@@ -3,7 +3,7 @@ extern crate curl;
 extern crate serde_json;
 
 mod http;
-mod html;
+pub mod html;
 mod opengraph;
 mod parser;
 mod schema_org;
@@ -11,43 +11,26 @@ mod schema_org;
 use http::HTTP;
 use html::HTML;
 
+use std::io;
 use std::str;
 
 pub struct Webpage {
-    pub http: Option<HTTP>, // info about the HTTP transfer, if any
-    pub html: Option<HTML>, // info from the parsed HTML doc, if any
+    pub http: HTTP, // info about the HTTP transfer
+    pub html: HTML, // info from the parsed HTML doc
 }
 
 impl Webpage {
-    pub fn from_file(path: &str) -> Self {
-        let html = HTML::from_file(path);
-
-        Self {
-            http: None,
-            html,
-        }
-    }
-
-    pub fn from_string(body: &str) -> Self {
-        let html = HTML::from_string(body.to_string(), None);
-
-        Self {
-            http: None,
-            html,
-        }
-    }
-
-    pub fn from_url(url: &str) -> Self {
-        let http = HTTP::fetch(url);
+    pub fn from_url(url: &str) -> Result<Self, io::Error> {
+        let http = HTTP::fetch(url)?;
 
         let html = HTML::from_string(
             http.body.clone(),
             Some(http.url.clone())
-        );
+        )?;
 
-        Self {
-            http: Some(http),
+        Ok(Self {
+            http,
             html,
-        }
+        })
     }
 }

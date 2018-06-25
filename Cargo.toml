@@ -1,6 +1,6 @@
 [package]
 name = "webpage"
-description = "Small library to fetch info about a web page"
+description = "Small library to fetch info about a web page: title, description, language, HTTP info, RSS feeds, Opengraph, Schema.org, and more"
 readme = "README.md"
 keywords = ["webpage", "html", "opengraph"]
 license = "MIT"

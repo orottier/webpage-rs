@@ -10,18 +10,19 @@ use webpage::Webpage;
 
 // ...
 
-info = Webpage::from_url("http://www.rust-lang.org/en-US/");
+info = Webpage::from_url("http://www.rust-lang.org/en-US/")
+    .expect("Could not read from URL");
 
-// the HTTP info
-let http = info.http.unwrap();
+// the HTTP transfer info
+let http = info.http;
 
 assert_eq!(http.ip, "54.192.129.71".to_string());
 assert!(http.headers[0].starts_with("HTTP"));
 assert!(http.body.starts_with("<!DOCTYPE html>"));
-assert_eq!(http.url, "https://www.rust-lang.org/en-US/".to_string()); // followed redirects
+assert_eq!(http.url, "https://www.rust-lang.org/en-US/".to_string()); // followed redirects (HTTPS)
 assert_eq!(http.content_type, "text/html".to_string());
 
-// the HTML info
+// the parsed HTML info
 let html = info.html.unwrap();
 
 assert_eq!(html.title.unwrap(), "The Rust Programming Language".to_string());
@@ -29,12 +30,20 @@ assert_eq!(html.description.unwrap(), "A systems programming language that runs 
 assert_eq!(html.opengraph.og_type, "website".to_string());
 ```
 
+You can also get HTML info about local data:
+
+```rust
+use webpage::HTML;
+let html = HTML::from_file("index.html", None);
+// or let html = HTML::from_string(input, None);
+```
+
 ## All fields
 
 ```rust
 pub struct Webpage {
-    pub http: Option<HTTP>, // info about the HTTP transfer, if any
-    pub html: Option<HTML>, // info from the parsed HTML doc, if any
+    pub http: HTTP, // info about the HTTP transfer
+    pub html: HTML, // info from the parsed HTML doc
 }
 
 pub struct HTTP {

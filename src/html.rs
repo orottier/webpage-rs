@@ -1,6 +1,7 @@
 use html5ever::parse_document;
 use html5ever::tendril::TendrilSink;
 
+use std::io;
 use std::path::Path;
 use std::default::Default;
 use std::collections::HashMap;
@@ -29,7 +30,7 @@ pub struct HTML {
 
 
 impl HTML {
-    pub fn empty(url: Option<String>) -> Self {
+    fn empty(url: Option<String>) -> Self {
         Self {
             title: None,
             description: None,
@@ -45,7 +46,7 @@ impl HTML {
         }
     }
 
-    fn from_dom(dom: RcDom, url: Option<String>) -> Self {
+    pub fn from_dom(dom: RcDom, url: Option<String>) -> Self {
         let mut html = Self::empty(url);
         let parser = Parser::start(dom.document);
         parser.traverse(&mut html);
@@ -53,7 +54,7 @@ impl HTML {
         html
     }
 
-    pub fn from_file(path: &str) -> Option<Self> {
+    pub fn from_file(path: &str, url: Option<String>) -> Result<Self, io::Error> {
         let opts = ParseOpts {
             ..Default::default()
         };
@@ -61,11 +62,11 @@ impl HTML {
             .from_utf8()
             .from_file(Path::new(path))
             .and_then(|dom| {
-                Ok(Self::from_dom(dom, None))
-            }).ok()
+                Ok(Self::from_dom(dom, url))
+            })
     }
 
-    pub fn from_string(html: String, url: Option<String>) -> Option<Self> {
+    pub fn from_string(html: String, url: Option<String>) -> Result<Self, io::Error> {
         let opts = ParseOpts {
             ..Default::default()
         };
@@ -74,6 +75,23 @@ impl HTML {
             .read_from(&mut html.as_bytes())
             .and_then(|dom| {
                 Ok(Self::from_dom(dom, url))
-            }).ok()
+            })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::HTML;
+
+    #[test]
+    fn from_string() {
+        let input = "<html><head><title>Hello</title></head><body>Contents".to_string();
+        let html = HTML::from_string(input, None);
+        assert!(html.is_ok());
+
+        let html = html.unwrap();
+        assert_eq!(html.title, Some("Hello".to_string()));
+        assert!(html.description.is_none());
+        assert_eq!(html.text_content, "Contents".to_string());
     }
 }
