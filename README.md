@@ -51,12 +51,15 @@ pub struct HTTP {
 pub struct HTML {
     pub title: Option<String>,
     pub description: Option<String>,
-    pub url: Option<String>,
+
+    pub url: Option<String>, // canonical url
+    pub feed: Option<String>, // RSS feed typically
 
     pub language: Option<String>, // as specified, not detected
     pub text_content: String, // all tags stripped from body
 
     pub meta: HashMap<String, String>, // flattened down list of meta properties
+
     pub opengraph: Opengraph,
     pub schema_org: Vec<SchemaOrg>,
 }

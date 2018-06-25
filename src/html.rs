@@ -17,6 +17,7 @@ pub struct HTML {
     pub title: Option<String>,
     pub description: Option<String>,
     pub url: Option<String>,
+    pub feed: Option<String>,
 
     pub language: Option<String>, // as specified, not detected
     pub text_content: String, // all tags stripped from body
@@ -33,6 +34,7 @@ impl HTML {
             title: None,
             description: None,
             url,
+            feed: None,
 
             language: None,
             text_content: String::new(),

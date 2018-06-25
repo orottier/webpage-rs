@@ -124,8 +124,21 @@ fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Ve
             }
         }
         if tag_name == "link" {
-            if get_attribute(attrs, "rel").unwrap_or("".to_string()) == "canonical" {
+            let rel = get_attribute(attrs, "rel").unwrap_or("".to_string());
+            if rel == "canonical" {
                 html.url = get_attribute(attrs, "href");
+            } else if rel == "alternate" {
+                let link_type = get_attribute(attrs, "type").unwrap_or("".to_string());
+                if vec![
+                    "application/atom+xml",
+                    "application/json",
+                    "application/rdf+xml",
+                    "application/rss+xml",
+                    "application/xml",
+                    "text/xml",
+                ].contains(&&link_type[..]) {
+                    html.feed = get_attribute(attrs, "href");
+                }
             }
         }
     }
