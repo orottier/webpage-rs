@@ -6,6 +6,7 @@ mod http;
 mod html;
 mod opengraph;
 mod parser;
+mod schema_org;
 
 use http::HTTP;
 use html::HTML;

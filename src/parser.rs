@@ -2,9 +2,8 @@ use html5ever::rcdom::{NodeData, Handle};
 use html5ever::Attribute;
 use html5ever::tendril::{Tendril, fmt::UTF8};
 
-use serde_json::{self, Value};
-
 use html::HTML;
+use schema_org::SchemaOrg;
 
 #[derive(Copy, Clone)]
 enum Segment {
@@ -136,9 +135,8 @@ fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Ve
         if let Some(script_type) = get_attribute(attrs, "type") {
             if script_type == "application/ld+json" {
                 if let Some(content) = text_content(&handle) {
-                    let v: Value = serde_json::from_str(&content).unwrap();
-                    if let Value::String(ref value) = v["@type"] {
-                        html.ld_json.push(value.to_string());
+                    if let Some(schema) = SchemaOrg::from(content) {
+                        html.schema_org.push(schema);
                     }
                 }
             }

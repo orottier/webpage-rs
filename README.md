@@ -58,6 +58,7 @@ pub struct HTML {
 
     pub meta: HashMap<String, String>, // flattened down list of meta properties
     pub opengraph: Opengraph,
+    pub schema_org: Vec<SchemaOrg>,
 }
 
 pub struct Opengraph {
@@ -69,8 +70,15 @@ pub struct Opengraph {
     pub audios: Vec<Object>,
 }
 
+// Facebook's Opengraph structured data
 pub struct OpengraphObject {
     pub url: String,
     pub properties: HashMap<String, String>,
+}
+
+// Google's schema.org structured data
+pub struct SchemaOrg {
+    pub schema_type: String,
+    pub value: serde_json::Value,
 }
 ```

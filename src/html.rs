@@ -9,6 +9,7 @@ use html5ever::driver::ParseOpts;
 use html5ever::rcdom::RcDom;
 
 use opengraph::Opengraph;
+use schema_org::SchemaOrg;
 use parser::Parser;
 
 #[derive(Debug)]
@@ -22,7 +23,7 @@ pub struct HTML {
 
     pub meta: HashMap<String, String>, // flattened down list of meta properties
     pub opengraph: Opengraph,
-    pub ld_json: Vec<String>,
+    pub schema_org: Vec<SchemaOrg>,
 }
 
 
@@ -38,7 +39,7 @@ impl HTML {
 
             meta: HashMap::new(),
             opengraph: Opengraph::empty(),
-            ld_json: Vec::new(),
+            schema_org: Vec::new(),
         }
     }
 
