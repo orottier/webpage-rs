@@ -1,6 +1,6 @@
 # Webpage.rs
 
-_Get some info about a webpage_
+_Small library to fetch info about a web page: title, description, language, HTTP info, RSS feeds, Opengraph, Schema.org, and more_
 
 ## Usage
 
@@ -23,10 +23,10 @@ assert_eq!(http.url, "https://www.rust-lang.org/en-US/".to_string()); // followe
 assert_eq!(http.content_type, "text/html".to_string());
 
 // the parsed HTML info
-let html = info.html.unwrap();
+let html = info.html;
 
-assert_eq!(html.title.unwrap(), "The Rust Programming Language".to_string());
-assert_eq!(html.description.unwrap(), "A systems programming language that runs blazingly fast, prevents segfaults, and guarantees thread safety.".to_string());
+assert_eq!(html.title, Some("The Rust Programming Language".to_string()));
+assert_eq!(html.description, Some("A systems programming language that runs blazingly fast, prevents segfaults, and guarantees thread safety.".to_string()));
 assert_eq!(html.opengraph.og_type, "website".to_string());
 ```
 
@@ -110,4 +110,4 @@ pub struct WebpageOptions {
 // usage
 let options = WebpageOptions { allow_insecure: true, ..Default::default() };
 let info = Webpage::from_url(&url, options).expect("Halp, could not fetch");
-``
+```
