@@ -1,6 +1,6 @@
 extern crate webpage;
 
-use webpage::{Webpage, html::HTML};
+use webpage::{Webpage, WebpageOptions, html::HTML};
 
 #[test]
 fn from_file() {
@@ -17,7 +17,7 @@ fn from_file() {
 #[ignore]
 fn from_url() {
     let url = "https://example.org";
-    let webpage = Webpage::from_url(url);
+    let webpage = Webpage::from_url(url, WebpageOptions::default());
     assert!(webpage.is_ok());
 
     let html = webpage.unwrap().html;

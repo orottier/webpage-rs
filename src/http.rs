@@ -1,3 +1,5 @@
+use super::WebpageOptions;
+
 use curl::easy::Easy;
 use std::time::Duration;
 use std::io;
@@ -15,14 +17,16 @@ pub struct HTTP {
 }
 
 impl HTTP {
-    pub fn fetch(url: &str) -> Result<Self, io::Error> {
+    pub fn fetch(url: &str, options: WebpageOptions) -> Result<Self, io::Error> {
         let mut handle = Easy::new();
 
         // configure
-        handle.timeout(Duration::from_secs(10))?;
-        handle.follow_location(true)?;
-        handle.max_redirections(5)?;
-        handle.useragent("Webpage - rust crate")?;
+        handle.ssl_verify_peer(!options.allow_insecure)?;
+        handle.ssl_verify_host(!options.allow_insecure)?;
+        handle.timeout(options.timeout)?;
+        handle.follow_location(options.follow_location)?;
+        handle.max_redirections(options.max_redirections)?;
+        handle.useragent(&options.useragent)?;
 
         handle.url(url)?;
 

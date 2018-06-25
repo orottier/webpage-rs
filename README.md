@@ -6,11 +6,11 @@ _Get some info about a webpage_
 
 ```rust
 extern crate webpage;
-use webpage::Webpage;
+use webpage::{Webpage, WebpageOptions};
 
 // ...
 
-info = Webpage::from_url("http://www.rust-lang.org/en-US/")
+info = Webpage::from_url("http://www.rust-lang.org/en-US/", WebpageOptions::default())
     .expect("Could not read from URL");
 
 // the HTTP transfer info
@@ -94,3 +94,20 @@ pub struct SchemaOrg {
     pub value: serde_json::Value,
 }
 ```
+
+## Options
+
+The following configurations are available:
+```rust
+pub struct WebpageOptions {
+    allow_insecure: false,
+    follow_location: true,
+    max_redirections: 5,
+    timeout: Duration::from_secs(10),
+    useragent: "Webpage - Rust crate - https://crates.io/crates/webpage".to_string(),
+}
+
+// usage
+let options = WebpageOptions { allow_insecure: true, ..Default::default() };
+let info = Webpage::from_url(&url, options).expect("Halp, could not fetch");
+``

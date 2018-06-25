@@ -55,10 +55,7 @@ impl HTML {
     }
 
     pub fn from_file(path: &str, url: Option<String>) -> Result<Self, io::Error> {
-        let opts = ParseOpts {
-            ..Default::default()
-        };
-        parse_document(RcDom::default(), opts)
+        parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()
             .from_file(Path::new(path))
             .and_then(|dom| {
@@ -67,10 +64,7 @@ impl HTML {
     }
 
     pub fn from_string(html: String, url: Option<String>) -> Result<Self, io::Error> {
-        let opts = ParseOpts {
-            ..Default::default()
-        };
-        parse_document(RcDom::default(), opts)
+        parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()
             .read_from(&mut html.as_bytes())
             .and_then(|dom| {
