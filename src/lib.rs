@@ -4,6 +4,7 @@ extern crate curl;
 mod http;
 mod html;
 mod opengraph;
+mod parser;
 
 use http::HTTP;
 use html::HTML;

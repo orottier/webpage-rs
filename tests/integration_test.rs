@@ -11,7 +11,7 @@ fn from_string() {
     let html = webpage.html.unwrap();
     assert_eq!(html.title, Some("Hello".to_string()));
     assert!(html.description.is_none());
-    assert_eq!(html.text, "Contents".to_string());
+    assert_eq!(html.text_content, "Contents".to_string());
 }
 
 #[test]
