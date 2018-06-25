@@ -1,5 +1,6 @@
 extern crate html5ever;
 extern crate curl;
+extern crate serde_json;
 
 mod http;
 mod html;

@@ -22,6 +22,7 @@ pub struct HTML {
 
     pub meta: HashMap<String, String>, // flattened down list of meta properties
     pub opengraph: Opengraph,
+    pub ld_json: Vec<String>,
 }
 
 
@@ -37,6 +38,7 @@ impl HTML {
 
             meta: HashMap::new(),
             opengraph: Opengraph::empty(),
+            ld_json: Vec::new(),
         }
     }
 

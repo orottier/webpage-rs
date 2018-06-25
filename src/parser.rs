@@ -2,6 +2,8 @@ use html5ever::rcdom::{NodeData, Handle};
 use html5ever::Attribute;
 use html5ever::tendril::{Tendril, fmt::UTF8};
 
+use serde_json::{self, Value};
+
 use html::HTML;
 
 #[derive(Copy, Clone)]
@@ -86,6 +88,8 @@ fn process_text(segment: Segment, tag_name: &str, contents: &str, html: &mut HTM
 }
 
 fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Vec<Attribute>, html: &mut HTML) {
+
+    // process language attribute
     if tag_name == "html" || tag_name == "body" {
         let language = get_attribute(attrs, "lang");
         if language.is_some() {
@@ -93,6 +97,7 @@ fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Ve
         }
     }
 
+    // process <head>
     if let Segment::Head = segment {
         if tag_name == "title" {
             html.title = text_content(&handle);
@@ -122,6 +127,20 @@ fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Ve
         if tag_name == "link" {
             if get_attribute(attrs, "rel").unwrap_or("".to_string()) == "canonical" {
                 html.url = get_attribute(attrs, "href");
+            }
+        }
+    }
+
+    // process ld-json snippets
+    if tag_name == "script" {
+        if let Some(script_type) = get_attribute(attrs, "type") {
+            if script_type == "application/ld+json" {
+                if let Some(content) = text_content(&handle) {
+                    let v: Value = serde_json::from_str(&content).unwrap();
+                    if let Value::String(ref value) = v["@type"] {
+                        html.ld_json.push(value.to_string());
+                    }
+                }
             }
         }
     }
