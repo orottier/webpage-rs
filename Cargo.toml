@@ -4,7 +4,7 @@ description = "Small library to fetch info about a web page: title, description,
 readme = "README.md"
 keywords = ["webpage", "html", "opengraph"]
 license = "MIT"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["Otto <otto@ot-to.nl>"]
 repository = "https://github.com/orottier/webpage-rs"
 

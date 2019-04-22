@@ -8,9 +8,7 @@ _Small library to fetch info about a web page: title, description, language, HTT
 extern crate webpage;
 use webpage::{Webpage, WebpageOptions};
 
-// ...
-
-info = Webpage::from_url("http://www.rust-lang.org/en-US/", WebpageOptions::default())
+let info = Webpage::from_url("http://www.rust-lang.org/en-US/", WebpageOptions::default())
     .expect("Could not read from URL");
 
 // the HTTP transfer info
