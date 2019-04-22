@@ -8,8 +8,7 @@ pub struct SchemaOrg {
 
 impl SchemaOrg {
     pub fn from(content: String) -> Option<Self> {
-        let v: Value = serde_json::from_str(&content)
-            .unwrap_or(Value::Null);
+        let v: Value = serde_json::from_str(&content).unwrap_or(Value::Null);
 
         let type_opt = v["@type"].clone();
         if let Value::String(ref type_val) = type_opt {

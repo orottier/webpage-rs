@@ -52,7 +52,12 @@ impl Opengraph {
     }
 }
 
-fn parse_object(og_type: &str, property: &str, content: String, collection: &mut Vec<OpengraphObject>) -> () {
+fn parse_object(
+    og_type: &str,
+    property: &str,
+    content: String,
+    collection: &mut Vec<OpengraphObject>,
+) -> () {
     let num_images = collection.len();
 
     if property == og_type || &property[og_type.len()..] == ":url" {
@@ -60,7 +65,8 @@ fn parse_object(og_type: &str, property: &str, content: String, collection: &mut
     } else if num_images > 0 && property.len() > og_type.len() + 1 {
         let property = &property["image:".len()..];
         collection[num_images - 1]
-            .properties.insert(property.to_string(), content);
+            .properties
+            .insert(property.to_string(), content);
     }
 }
 
@@ -82,7 +88,10 @@ mod tests {
         let mut opengraph = Opengraph::empty();
 
         opengraph.extend("image", "http://example.org/image.png".to_string());
-        opengraph.extend("image:secure_url", "https://example.org/image.png".to_string());
+        opengraph.extend(
+            "image:secure_url",
+            "https://example.org/image.png".to_string(),
+        );
         assert_eq!(opengraph.images.len(), 1);
         assert_eq!(opengraph.images[0].url, "http://example.org/image.png");
 

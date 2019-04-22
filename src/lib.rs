@@ -1,16 +1,16 @@
-extern crate html5ever;
 extern crate curl;
+extern crate html5ever;
 extern crate serde_json;
 
-pub mod http;
 pub mod html;
+pub mod http;
 pub mod opengraph;
 pub mod schema_org;
 
 mod parser;
 
-pub use http::HTTP;
 pub use html::HTML;
+pub use http::HTTP;
 pub use opengraph::{Opengraph, OpengraphObject};
 pub use schema_org::SchemaOrg;
 
@@ -47,14 +47,8 @@ impl Webpage {
     pub fn from_url(url: &str, options: WebpageOptions) -> Result<Self, io::Error> {
         let http = HTTP::fetch(url, options)?;
 
-        let html = HTML::from_string(
-            http.body.clone(),
-            Some(http.url.clone())
-        )?;
+        let html = HTML::from_string(http.body.clone(), Some(http.url.clone()))?;
 
-        Ok(Self {
-            http,
-            html,
-        })
+        Ok(Self { http, html })
     }
 }

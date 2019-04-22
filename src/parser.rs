@@ -1,6 +1,6 @@
-use html5ever::rcdom::{NodeData, Handle};
+use html5ever::rcdom::{Handle, NodeData};
+use html5ever::tendril::{fmt::UTF8, Tendril};
 use html5ever::Attribute;
-use html5ever::tendril::{Tendril, fmt::UTF8};
 
 use html::HTML;
 use schema_org::SchemaOrg;
@@ -41,14 +41,19 @@ impl<'a> Parser<'a> {
                     let tag_name = name.local.as_ref();
 
                     process_text(
-                        self.segment, tag_name,
+                        self.segment,
+                        tag_name,
                         tendril_to_utf8(&contents.borrow()),
-                        html
+                        html,
                     )
                 }
-            },
+            }
 
-            NodeData::Element { ref name, ref attrs, .. } => {
+            NodeData::Element {
+                ref name,
+                ref attrs,
+                ..
+            } => {
                 let tag_name = name.local.as_ref();
 
                 if tag_name == "head" {
@@ -57,14 +62,10 @@ impl<'a> Parser<'a> {
                     segment = Segment::Body;
                 }
 
-                process_element(
-                    segment, tag_name,
-                    handle_ref, &attrs.borrow(),
-                    html
-                )
+                process_element(segment, tag_name, handle_ref, &attrs.borrow(), html)
             }
 
-            NodeData::ProcessingInstruction { .. } => unreachable!()
+            NodeData::ProcessingInstruction { .. } => unreachable!(),
         }
 
         for child in self.handle.children.borrow().iter() {
@@ -86,8 +87,13 @@ fn process_text(segment: Segment, tag_name: &str, contents: &str, html: &mut HTM
     }
 }
 
-fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Vec<Attribute>, html: &mut HTML) {
-
+fn process_element(
+    segment: Segment,
+    tag_name: &str,
+    handle: &Handle,
+    attrs: &Vec<Attribute>,
+    html: &mut HTML,
+) {
     // process language attribute
     if tag_name == "html" || tag_name == "body" {
         let language = get_attribute(attrs, "lang");
@@ -136,7 +142,9 @@ fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Ve
                     "application/rss+xml",
                     "application/xml",
                     "text/xml",
-                ].contains(&&link_type[..]) {
+                ]
+                .contains(&&link_type[..])
+                {
                     html.feed = get_attribute(attrs, "href");
                 }
             }
@@ -157,9 +165,9 @@ fn process_element(segment: Segment, tag_name: &str, handle: &Handle, attrs: &Ve
     }
 }
 
-
 fn get_attribute(attrs: &Vec<Attribute>, name: &str) -> Option<String> {
-    attrs.iter()
+    attrs
+        .iter()
         .filter(|attr| attr.name.local.as_ref() == name)
         .nth(0)
         .and_then(|attr| Some(attr.value.trim().to_string()))

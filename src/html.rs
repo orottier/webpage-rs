@@ -1,17 +1,17 @@
 use html5ever::parse_document;
 use html5ever::tendril::TendrilSink;
 
+use std::collections::HashMap;
+use std::default::Default;
 use std::io;
 use std::path::Path;
-use std::default::Default;
-use std::collections::HashMap;
 
 use html5ever::driver::ParseOpts;
 use html5ever::rcdom::RcDom;
 
 use opengraph::Opengraph;
-use schema_org::SchemaOrg;
 use parser::Parser;
+use schema_org::SchemaOrg;
 
 #[derive(Debug)]
 pub struct HTML {
@@ -21,13 +21,12 @@ pub struct HTML {
     pub feed: Option<String>,
 
     pub language: Option<String>, // as specified, not detected
-    pub text_content: String, // all tags stripped from body
+    pub text_content: String,     // all tags stripped from body
 
     pub meta: HashMap<String, String>, // flattened down list of meta properties
     pub opengraph: Opengraph,
     pub schema_org: Vec<SchemaOrg>,
 }
-
 
 impl HTML {
     fn empty(url: Option<String>) -> Self {
@@ -58,18 +57,14 @@ impl HTML {
         parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()
             .from_file(Path::new(path))
-            .and_then(|dom| {
-                Ok(Self::from_dom(dom, url))
-            })
+            .and_then(|dom| Ok(Self::from_dom(dom, url)))
     }
 
     pub fn from_string(html: String, url: Option<String>) -> Result<Self, io::Error> {
         parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()
             .read_from(&mut html.as_bytes())
-            .and_then(|dom| {
-                Ok(Self::from_dom(dom, url))
-            })
+            .and_then(|dom| Ok(Self::from_dom(dom, url)))
     }
 }
 

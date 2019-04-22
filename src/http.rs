@@ -1,8 +1,8 @@
 use super::WebpageOptions;
 
 use curl::easy::Easy;
-use std::time::Duration;
 use std::io;
+use std::time::Duration;
 
 #[derive(Debug)]
 pub struct HTTP {
@@ -35,8 +35,10 @@ impl HTTP {
         {
             let mut transfer = handle.transfer();
             transfer.header_function(|new_data| {
-                let header = String::from_utf8_lossy(new_data).into_owned()
-                    .trim().to_string();
+                let header = String::from_utf8_lossy(new_data)
+                    .into_owned()
+                    .trim()
+                    .to_string();
 
                 // clear list on redirects
                 if header.starts_with("HTTP/") {
