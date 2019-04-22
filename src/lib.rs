@@ -1,7 +1,3 @@
-extern crate curl;
-extern crate html5ever;
-extern crate serde_json;
-
 pub mod html;
 pub mod http;
 pub mod opengraph;
@@ -9,10 +5,10 @@ pub mod schema_org;
 
 mod parser;
 
-pub use html::HTML;
-pub use http::HTTP;
-pub use opengraph::{Opengraph, OpengraphObject};
-pub use schema_org::SchemaOrg;
+pub use crate::html::HTML;
+pub use crate::http::HTTP;
+pub use crate::opengraph::{Opengraph, OpengraphObject};
+pub use crate::schema_org::SchemaOrg;
 
 use std::io;
 use std::str;

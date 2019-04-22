@@ -1,4 +1,4 @@
-use super::WebpageOptions;
+use crate::WebpageOptions;
 
 use curl::easy::Easy;
 use std::io;

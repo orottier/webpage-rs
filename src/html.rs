@@ -9,9 +9,9 @@ use std::path::Path;
 use html5ever::driver::ParseOpts;
 use html5ever::rcdom::RcDom;
 
-use opengraph::Opengraph;
-use parser::Parser;
-use schema_org::SchemaOrg;
+use crate::opengraph::Opengraph;
+use crate::parser::Parser;
+use crate::schema_org::SchemaOrg;
 
 #[derive(Debug)]
 pub struct HTML {

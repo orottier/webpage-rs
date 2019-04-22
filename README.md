@@ -5,7 +5,6 @@ _Small library to fetch info about a web page: title, description, language, HTT
 ## Usage
 
 ```rust
-extern crate webpage;
 use webpage::{Webpage, WebpageOptions};
 
 let info = Webpage::from_url("http://www.rust-lang.org/en-US/", WebpageOptions::default())

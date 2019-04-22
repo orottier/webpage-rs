@@ -7,6 +7,7 @@ license = "MIT"
 version = "0.1.4"
 authors = ["Otto <otto@ot-to.nl>"]
 repository = "https://github.com/orottier/webpage-rs"
+edition = "2018"
 
 [dependencies]
 curl = "0.4.12"

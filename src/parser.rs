@@ -2,8 +2,8 @@ use html5ever::rcdom::{Handle, NodeData};
 use html5ever::tendril::{fmt::UTF8, Tendril};
 use html5ever::Attribute;
 
-use html::HTML;
-use schema_org::SchemaOrg;
+use crate::html::HTML;
+use crate::schema_org::SchemaOrg;
 
 #[derive(Copy, Clone)]
 enum Segment {
