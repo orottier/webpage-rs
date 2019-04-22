@@ -8,8 +8,8 @@ mod opengraph;
 mod parser;
 mod schema_org;
 
-use http::HTTP;
-use html::HTML;
+pub use http::HTTP;
+pub use html::HTML;
 
 use std::io;
 use std::str;
