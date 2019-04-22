@@ -37,7 +37,7 @@ impl Opengraph {
         }
     }
 
-    pub fn extend(&mut self, property: &str, content: String) -> () {
+    pub fn extend(&mut self, property: &str, content: String) {
         if property == "type" {
             self.og_type = content;
         } else if property.starts_with("image") {
@@ -57,7 +57,7 @@ fn parse_object(
     property: &str,
     content: String,
     collection: &mut Vec<OpengraphObject>,
-) -> () {
+) {
     let num_images = collection.len();
 
     if property == og_type || &property[og_type.len()..] == ":url" {

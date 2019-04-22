@@ -45,7 +45,7 @@ impl HTTP {
                     headers = Vec::new();
                 }
 
-                if header.len() > 0 {
+                if !header.is_empty() {
                     headers.push(header);
                 }
 
@@ -71,7 +71,7 @@ impl HTTP {
             url: handle.effective_url()?.unwrap_or("").to_string(),
 
             headers,
-            body: body,
+            body,
         })
     }
 }

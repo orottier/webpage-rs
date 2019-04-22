@@ -27,7 +27,7 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn traverse(self, html: &mut HTML) -> () {
+    pub fn traverse(self, html: &mut HTML) {
         let mut segment = self.segment;
 
         let handle_ref = &self.handle;
@@ -91,7 +91,7 @@ fn process_element(
     segment: Segment,
     tag_name: &str,
     handle: &Handle,
-    attrs: &Vec<Attribute>,
+    attrs: &[Attribute],
     html: &mut HTML,
 ) {
     // process language attribute
@@ -111,8 +111,8 @@ fn process_element(
             let content = get_attribute(attrs, "content");
             if let Some(content) = content {
                 let property_opt = get_attribute(attrs, "property")
-                    .or(get_attribute(attrs, "name"))
-                    .or(get_attribute(attrs, "http-equiv"));
+                    .or_else(|| get_attribute(attrs, "name"))
+                    .or_else(|| get_attribute(attrs, "http-equiv"));
 
                 if let Some(property) = property_opt {
                     html.meta.insert(property.clone(), content.clone());
@@ -130,11 +130,11 @@ fn process_element(
             }
         }
         if tag_name == "link" {
-            let rel = get_attribute(attrs, "rel").unwrap_or("".to_string());
+            let rel = get_attribute(attrs, "rel").unwrap_or_else(|| "".to_string());
             if rel == "canonical" {
                 html.url = get_attribute(attrs, "href");
             } else if rel == "alternate" {
-                let link_type = get_attribute(attrs, "type").unwrap_or("".to_string());
+                let link_type = get_attribute(attrs, "type").unwrap_or_else(|| "".to_string());
                 if vec![
                     "application/atom+xml",
                     "application/json",
@@ -165,7 +165,7 @@ fn process_element(
     }
 }
 
-fn get_attribute(attrs: &Vec<Attribute>, name: &str) -> Option<String> {
+fn get_attribute(attrs: &[Attribute], name: &str) -> Option<String> {
     attrs
         .iter()
         .filter(|attr| attr.name.local.as_ref() == name)
