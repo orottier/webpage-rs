@@ -1,19 +1,28 @@
 use std::collections::HashMap;
 
 #[derive(Debug)]
-pub struct OpengraphObject {
-    pub url: String,
+/// Representing [OpenGraph](http://ogp.me/) information
+pub struct Opengraph {
+    /// Opengraph type (article, image, event, ..)
+    pub og_type: String,
+    /// Opengraph properties of this object
     pub properties: HashMap<String, String>,
+
+    /// Images relevant to this object
+    pub images: Vec<OpengraphObject>,
+    /// Videos relevant to this object
+    pub videos: Vec<OpengraphObject>,
+    /// Audio relevant to this object
+    pub audios: Vec<OpengraphObject>,
 }
 
 #[derive(Debug)]
-pub struct Opengraph {
-    pub og_type: String,
+/// Info about a media type
+pub struct OpengraphObject {
+    /// URL describing this object
+    pub url: String,
+    /// Properties of the referred object
     pub properties: HashMap<String, String>,
-
-    pub images: Vec<OpengraphObject>,
-    pub videos: Vec<OpengraphObject>,
-    pub audios: Vec<OpengraphObject>,
 }
 
 impl OpengraphObject {

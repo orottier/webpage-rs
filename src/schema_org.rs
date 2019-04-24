@@ -1,8 +1,11 @@
 use serde_json::{self, Value};
 
 #[derive(Debug)]
+/// Representing [Schema.org](https://schema.org/) information (currently only via JSON-LD)
 pub struct SchemaOrg {
+    /// Schema.org type (article, image, event)
     pub schema_type: String,
+    /// Schema.org info
     pub value: Value,
 }
 
@@ -34,8 +37,8 @@ mod tests {
 
     #[test]
     fn test_type() {
-        let schema = SchemaOrg::from("{\"@type\": \"Test\"}".to_string());
+        let schema = SchemaOrg::from("{\"@type\": \"article\"}".to_string());
         assert!(schema.is_some());
-        assert_eq!(schema.unwrap().schema_type, "Test");
+        assert_eq!(schema.unwrap().schema_type, "article");
     }
 }

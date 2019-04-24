@@ -15,16 +15,25 @@ use crate::schema_org::SchemaOrg;
 
 #[derive(Debug)]
 pub struct HTML {
+    /// \<title\>
     pub title: Option<String>,
+    /// meta description
     pub description: Option<String>,
+    /// Canonical URL
     pub url: Option<String>,
+    /// Feed URL (atom, rss, ..)
     pub feed: Option<String>,
 
-    pub language: Option<String>, // as specified, not detected
-    pub text_content: String,     // all tags stripped from body
+    /// Language as specified in the document
+    pub language: Option<String>,
+    /// Text content inside \<body\>, all tags stripped
+    pub text_content: String,
 
-    pub meta: HashMap<String, String>, // flattened down list of meta properties
+    /// Flattened down list of meta properties
+    pub meta: HashMap<String, String>,
+    /// Opengraph tags
     pub opengraph: Opengraph,
+    /// Schema.org data
     pub schema_org: Vec<SchemaOrg>,
 }
 
@@ -45,6 +54,7 @@ impl HTML {
         }
     }
 
+    /// Construct HTML from RcDom, optionally with a URL set
     pub fn from_dom(dom: RcDom, url: Option<String>) -> Self {
         let mut html = Self::empty(url);
         let parser = Parser::start(dom.document);
@@ -53,6 +63,7 @@ impl HTML {
         html
     }
 
+    /// Construct HTML from File, optionally with a URL set
     pub fn from_file(path: &str, url: Option<String>) -> Result<Self, io::Error> {
         parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()
@@ -60,6 +71,16 @@ impl HTML {
             .and_then(|dom| Ok(Self::from_dom(dom, url)))
     }
 
+    /// Construct HTML from String, optionally with a URL set
+    ///
+    /// ## Examples
+    /// ```
+    /// use webpage::HTML;
+    ///
+    /// let input = String::from("<html><head><title>Hello</title></head><body>Contents");
+    /// let html = HTML::from_string(input, None);
+    /// assert!(html.is_ok());
+    ///  ```
     pub fn from_string(html: String, url: Option<String>) -> Result<Self, io::Error> {
         parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()

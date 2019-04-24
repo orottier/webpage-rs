@@ -6,17 +6,38 @@ use std::time::Duration;
 
 #[derive(Debug)]
 pub struct HTTP {
+    /// The external ip address (v4 or v6)
     pub ip: String,
+    /// Duration of the HTTP call
     pub transfer_time: Duration,
+    /// Number of redirections encountered
     pub redirect_count: u32,
+    /// HTTP content type returned
     pub content_type: String,
+    /// HTTP response code returned
     pub response_code: u32,
+    /// All HTTP response headers
     pub headers: Vec<String>,
-    pub url: String, // effective url
+    /// Effective URL that was visited
+    pub url: String,
+    /// HTTP body
     pub body: String,
 }
 
 impl HTTP {
+    /// Fetch a webpage from the given URL
+    ///
+    /// ## Examples
+    /// ```
+    /// use webpage::HTTP;
+    /// use webpage::WebpageOptions;
+    ///
+    /// let info = HTTP::fetch("http://example.org", WebpageOptions::default());
+    /// assert!(info.is_ok());
+    ///
+    /// let info = HTTP::fetch("mal formed or unreachable", WebpageOptions::default());
+    /// assert!(info.is_err());
+    /// ```
     pub fn fetch(url: &str, options: WebpageOptions) -> Result<Self, io::Error> {
         let mut handle = Easy::new();
 
