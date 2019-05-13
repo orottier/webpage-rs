@@ -1,5 +1,7 @@
 # Webpage.rs
 
+![crates.io](https://img.shields.io/crates/v/webpage.svg)
+
 _Small library to fetch info about a web page: title, description, language, HTTP info, RSS feeds, Opengraph, Schema.org, and more_
 
 ## Usage
