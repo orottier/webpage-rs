@@ -1,6 +1,6 @@
 # Webpage.rs
 
-![crates.io](https://img.shields.io/crates/v/webpage.svg)
+[![crates.io](https://img.shields.io/crates/v/webpage.svg)](https://crates.io/crates/webpage)
 
 _Small library to fetch info about a web page: title, description, language, HTTP info, RSS feeds, Opengraph, Schema.org, and more_
 
