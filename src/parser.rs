@@ -156,9 +156,7 @@ fn process_element(
         if let Some(script_type) = get_attribute(attrs, "type") {
             if script_type == "application/ld+json" {
                 if let Some(content) = text_content(&handle) {
-                    if let Some(schema) = SchemaOrg::from(content) {
-                        html.schema_org.push(schema);
-                    }
+                    html.schema_org.append(&mut SchemaOrg::from(content));
                 }
             }
         }

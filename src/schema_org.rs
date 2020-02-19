@@ -10,18 +10,28 @@ pub struct SchemaOrg {
 }
 
 impl SchemaOrg {
-    pub fn from(content: String) -> Option<Self> {
-        let v: Value = serde_json::from_str(&content).unwrap_or(Value::Null);
+    pub fn from(content: String) -> Vec<Self> {
+        let node: Value = serde_json::from_str(&content).unwrap_or(Value::Null);
 
-        let type_opt = v["@type"].clone();
-        if let Value::String(ref type_val) = type_opt {
-            return Some(SchemaOrg {
-                schema_type: type_val.to_string(),
-                value: v,
-            });
+        let vals: Vec<Value>;
+        if let Value::Array(arr) = node {
+            vals = arr;
+        } else {
+            vals = vec![node];
         }
 
-        None
+        vals.into_iter()
+            .flat_map(|v| {
+                let type_opt = v["@type"].clone();
+                if let Value::String(ref type_val) = type_opt {
+                    return Some(SchemaOrg {
+                        schema_type: type_val.to_string(),
+                        value: v,
+                    });
+                }
+                None
+            })
+            .collect()
     }
 }
 
