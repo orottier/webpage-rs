@@ -81,7 +81,10 @@ impl<'a> Parser<'a> {
 
 fn process_text(segment: Segment, tag_name: &str, contents: &str, html: &mut HTML) {
     if let Segment::Body = segment {
-        if tag_name != "style" && tag_name != "script" {
+        if tag_name != "style"
+            && tag_name != "script"
+            && tag_name != "noscript" {
+            html.text_content.push_str(" ");
             html.text_content.push_str(contents);
         }
     }
