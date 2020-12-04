@@ -70,6 +70,7 @@ use std::str;
 use std::time::Duration;
 
 /// Resulting info for a webpage
+#[derive(Debug)]
 pub struct Webpage {
     /// info about the HTTP transfer
     pub http: HTTP,
@@ -78,6 +79,7 @@ pub struct Webpage {
 }
 
 /// Configuration options
+#[derive(Debug)]
 pub struct WebpageOptions {
     /// Allow fetching over invalid and/or self signed HTTPS connections \[false\]
     pub allow_insecure: bool,
