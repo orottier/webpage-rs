@@ -14,6 +14,7 @@ use crate::parser::Parser;
 use crate::schema_org::SchemaOrg;
 
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct HTML {
     /// \<title\>
     pub title: Option<String>,

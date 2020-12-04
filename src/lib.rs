@@ -69,8 +69,13 @@ use std::io;
 use std::str;
 use std::time::Duration;
 
+#[cfg(feature = "serde")]
+#[macro_use]
+extern crate serde;
+
 /// Resulting info for a webpage
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Webpage {
     /// info about the HTTP transfer
     pub http: HTTP,
@@ -80,6 +85,7 @@ pub struct Webpage {
 
 /// Configuration options
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct WebpageOptions {
     /// Allow fetching over invalid and/or self signed HTTPS connections \[false\]
     pub allow_insecure: bool,
