@@ -42,13 +42,13 @@ mod tests {
     #[test]
     fn test_empty() {
         let schema = SchemaOrg::from("{}".to_string());
-        assert!(schema.is_none());
+        assert!(schema.is_empty());
     }
 
     #[test]
     fn test_type() {
         let schema = SchemaOrg::from("{\"@type\": \"article\"}".to_string());
-        assert!(schema.is_some());
-        assert_eq!(schema.unwrap().schema_type, "article");
+        assert_eq!(schema.len(), 1);
+        assert_eq!(schema[0].schema_type, "article");
     }
 }
