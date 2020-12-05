@@ -1,6 +1,6 @@
 extern crate webpage;
 
-use webpage::{Webpage, WebpageOptions, html::HTML};
+use webpage::{html::HTML, Webpage, WebpageOptions};
 
 #[test]
 fn from_file() {
