@@ -9,8 +9,11 @@ authors = ["Otto <otto@ot-to.nl>"]
 repository = "https://github.com/orottier/webpage-rs"
 edition = "2018"
 
+[features]
+default = ["curl"]
+
 [dependencies]
-curl = "0.4.12"
+curl = { version = "0.4.12", optional = true }
 html5ever = "0.22.3"
 serde = { version = "1.0", optional = true, features = ["derive"] }
 serde_json = "1.0"

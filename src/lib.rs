@@ -54,6 +54,7 @@
 //! ```
 
 pub mod html;
+#[cfg(feature = "curl")]
 pub mod http;
 pub mod opengraph;
 pub mod schema_org;
@@ -61,12 +62,12 @@ pub mod schema_org;
 mod parser;
 
 pub use crate::html::HTML;
+#[cfg(feature = "curl")]
 pub use crate::http::HTTP;
 pub use crate::opengraph::{Opengraph, OpengraphObject};
 pub use crate::schema_org::SchemaOrg;
 
-use std::io;
-use std::str;
+#[cfg(feature = "curl")]
 use std::time::Duration;
 
 #[cfg(feature = "serde")]
@@ -78,6 +79,7 @@ extern crate serde;
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Webpage {
     /// info about the HTTP transfer
+    #[cfg(feature = "curl")]
     pub http: HTTP,
     /// info from the parsed HTML doc
     pub html: HTML,
@@ -85,6 +87,7 @@ pub struct Webpage {
 
 /// Configuration options
 #[derive(Debug)]
+#[cfg(feature = "curl")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct WebpageOptions {
     /// Allow fetching over invalid and/or self signed HTTPS connections \[false\]
@@ -99,6 +102,7 @@ pub struct WebpageOptions {
     pub useragent: String,
 }
 
+#[cfg(feature = "curl")]
 impl Default for WebpageOptions {
     fn default() -> Self {
         Self {
@@ -111,6 +115,7 @@ impl Default for WebpageOptions {
     }
 }
 
+#[cfg(feature = "curl")]
 impl Webpage {
     /// Fetch a webpage from the given URL, and extract HTML info
     ///
@@ -121,7 +126,7 @@ impl Webpage {
     /// let info = Webpage::from_url("http://example.org", WebpageOptions::default());
     /// assert!(info.is_ok())
     /// ```
-    pub fn from_url(url: &str, options: WebpageOptions) -> Result<Self, io::Error> {
+    pub fn from_url(url: &str, options: WebpageOptions) -> Result<Self, std::io::Error> {
         let http = HTTP::fetch(url, options)?;
 
         let html = HTML::from_string(http.body.clone(), Some(http.url.clone()))?;
