@@ -13,7 +13,7 @@ use crate::opengraph::Opengraph;
 use crate::parser::Parser;
 use crate::schema_org::SchemaOrg;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct HTML {
     /// \<title\>

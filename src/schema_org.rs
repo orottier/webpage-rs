@@ -1,7 +1,7 @@
 use serde_json::{self, Value};
 
 /// Representing [Schema.org](https://schema.org/) information (currently only via JSON-LD)
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct SchemaOrg {
     /// Schema.org type (article, image, event)

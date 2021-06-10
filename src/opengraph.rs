@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 /// Representing [OpenGraph](http://ogp.me/) information
 pub struct Opengraph {
@@ -17,7 +17,7 @@ pub struct Opengraph {
     pub audios: Vec<OpengraphObject>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 /// Info about a media type
 pub struct OpengraphObject {
