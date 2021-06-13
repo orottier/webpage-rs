@@ -1,3 +1,5 @@
+//! Schema.org information
+
 use serde_json::{self, Value};
 
 /// Representing [Schema.org](https://schema.org/) information (currently only via JSON-LD)

@@ -1,3 +1,5 @@
+//! OpenGraph information
+
 use std::collections::HashMap;
 
 #[derive(Debug, Clone)]

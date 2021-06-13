@@ -14,7 +14,7 @@
 //! // assert_eq!(http.ip, "54.192.129.71".to_string());
 //! assert!(http.headers[0].starts_with("HTTP"));
 //! assert!(http.body.starts_with("<!doctype html>"));
-//! assert_eq!(http.url, "http://example.org/".to_string()); // effective url
+//! assert_eq!(http.url, "http://example.org".to_string()); // effective url
 //! assert_eq!(http.content_type, "text/html; charset=UTF-8".to_string());
 //!
 //! // the parsed HTML info

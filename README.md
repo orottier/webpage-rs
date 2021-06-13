@@ -37,13 +37,19 @@ let html = HTML::from_file("index.html", None);
 // or let html = HTML::from_string(input, None);
 ```
 
-## Serialization
+## Features
+
+### Serialization
 
 If you need to be able to serialize the data provided by the library using [serde](https://serde.rs/), you can include specify the `serde` *feature* while declaring your dependencies in `Cargo.toml`:
 
 ```toml
 webpage = { version = "1.1", features = ["serde"] }
 ```
+
+### No curl dependency
+
+The `curl` feature is enabled by default but is optional. This is useful if you do not need a HTTP client but already have the HTML data at hand.
 
 ## All fields
 

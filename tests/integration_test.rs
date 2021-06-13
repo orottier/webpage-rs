@@ -1,5 +1,8 @@
 extern crate webpage;
 
+use webpage::html::HTML;
+
+#[cfg(feature = "curl")]
 use webpage::{html::HTML, Webpage, WebpageOptions};
 
 #[test]
@@ -15,6 +18,7 @@ fn from_file() {
 
 #[test]
 #[ignore]
+#[cfg(feature = "curl")]
 fn from_url() {
     let url = "https://example.org";
     let webpage = Webpage::from_url(url, WebpageOptions::default());

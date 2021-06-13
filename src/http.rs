@@ -1,3 +1,5 @@
+//! Info about the HTTP transfer
+
 use crate::WebpageOptions;
 
 use curl::easy::Easy;

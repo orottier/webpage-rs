@@ -1,3 +1,5 @@
+//! Info from the parsed HTML document
+
 use html5ever::parse_document;
 use html5ever::tendril::TendrilSink;
 
