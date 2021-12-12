@@ -1,7 +1,5 @@
 extern crate webpage;
 
-use webpage::html::HTML;
-
 #[cfg(feature = "curl")]
 use webpage::{html::HTML, Webpage, WebpageOptions};
 

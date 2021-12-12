@@ -9,7 +9,7 @@ use std::io;
 use std::path::Path;
 
 use html5ever::driver::ParseOpts;
-use html5ever::rcdom::RcDom;
+use markup5ever_rcdom::RcDom;
 
 use crate::opengraph::Opengraph;
 use crate::parser::Parser;
