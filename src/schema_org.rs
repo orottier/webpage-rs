@@ -23,6 +23,16 @@ impl SchemaOrg {
             vals = vec![node];
         }
 
+        // Some websites place schema.org objects under "@graph", which we want to use as values
+        let vals: Vec<Value> = if let Some(obj) = vals.first().and_then(|v| v.as_object()) {
+            obj.get("@graph")
+                .and_then(|v| v.as_array())
+                .unwrap_or(&vals)
+                .to_vec()
+        } else {
+            vals
+        };
+
         vals.into_iter()
             .flat_map(|v| {
                 let type_opt = v["@type"].clone();
@@ -50,8 +60,15 @@ mod tests {
 
     #[test]
     fn test_type() {
-        let schema = SchemaOrg::from("{\"@type\": \"article\"}".to_string());
+        let schema = SchemaOrg::from("{\"@type\": \"NewsArticle\"}".to_string());
         assert_eq!(schema.len(), 1);
-        assert_eq!(schema[0].schema_type, "article");
+        assert_eq!(schema[0].schema_type, "NewsArticle");
+    }
+
+    #[test]
+    fn test_graph() {
+        let schema = SchemaOrg::from("{\"@context\":\"https://schema.org\",\"@graph\":[{\"@context\":\"https://schema.org\",\"@type\":\"NewsArticle\"}]}".to_string());
+        assert_eq!(schema.len(), 1);
+        assert_eq!(schema[0].schema_type, "NewsArticle");
     }
 }
