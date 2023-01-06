@@ -83,7 +83,7 @@ fn process_text(segment: Segment, tag_name: &str, contents: &str, html: &mut HTM
     if let Segment::Body = segment {
         if tag_name != "style" && tag_name != "script" && tag_name != "noscript" {
             if !html.text_content.is_empty() {
-                html.text_content.push_str(" ");
+                html.text_content.push(' ');
             }
             html.text_content.push_str(contents);
         }
@@ -108,7 +108,7 @@ fn process_element(
     // process <head>
     if let Segment::Head = segment {
         if tag_name == "title" {
-            html.title = text_content(&handle);
+            html.title = text_content(handle);
         }
         if tag_name == "meta" {
             let content = get_attribute(attrs, "content");
@@ -133,11 +133,11 @@ fn process_element(
             }
         }
         if tag_name == "link" {
-            let rel = get_attribute(attrs, "rel").unwrap_or_else(|| "".to_string());
+            let rel = get_attribute(attrs, "rel").unwrap_or_default();
             if rel == "canonical" {
                 html.url = get_attribute(attrs, "href");
             } else if rel == "alternate" {
-                let link_type = get_attribute(attrs, "type").unwrap_or_else(|| "".to_string());
+                let link_type = get_attribute(attrs, "type").unwrap_or_default();
                 if vec![
                     "application/atom+xml",
                     "application/json",
@@ -158,7 +158,7 @@ fn process_element(
     if tag_name == "script" {
         if let Some(script_type) = get_attribute(attrs, "type") {
             if script_type == "application/ld+json" {
-                if let Some(content) = text_content(&handle) {
+                if let Some(content) = text_content(handle) {
                     html.schema_org.append(&mut SchemaOrg::from(content));
                 }
             }
@@ -169,9 +169,8 @@ fn process_element(
 fn get_attribute(attrs: &[Attribute], name: &str) -> Option<String> {
     attrs
         .iter()
-        .filter(|attr| attr.name.local.as_ref() == name)
-        .nth(0)
-        .and_then(|attr| Some(attr.value.trim().to_string()))
+        .find(|attr| attr.name.local.as_ref() == name)
+        .map(|attr| attr.value.trim().to_string())
 }
 
 fn text_content(handle: &Handle) -> Option<String> {

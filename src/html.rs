@@ -71,7 +71,7 @@ impl HTML {
         parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()
             .from_file(Path::new(path))
-            .and_then(|dom| Ok(Self::from_dom(dom, url)))
+            .map(|dom| Self::from_dom(dom, url))
     }
 
     /// Construct HTML from String, optionally with a URL set
@@ -88,7 +88,7 @@ impl HTML {
         parse_document(RcDom::default(), ParseOpts::default())
             .from_utf8()
             .read_from(&mut html.as_bytes())
-            .and_then(|dom| Ok(Self::from_dom(dom, url)))
+            .map(|dom| Self::from_dom(dom, url))
     }
 }
 
