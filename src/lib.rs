@@ -98,7 +98,7 @@ pub struct WebpageOptions {
     pub max_redirections: u32,
     /// Timeout for the HTTP request \[10 secs\]
     pub timeout: Duration,
-    /// User agent string used for the request \[webpage-rs - https://crates.io/crates/webpage\]
+    /// User agent string used for the request \[webpage-rs - <https://crates.io/crates/webpage>\]
     pub useragent: String,
 }
 
