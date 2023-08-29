@@ -1,10 +1,11 @@
 //! Info about the HTTP transfer
 
-use crate::WebpageOptions;
-
-use curl::easy::Easy;
 use std::io;
 use std::time::Duration;
+
+use curl::easy::{Easy, List};
+
+use crate::WebpageOptions;
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -51,7 +52,13 @@ impl HTTP {
         handle.follow_location(options.follow_location)?;
         handle.max_redirections(options.max_redirections)?;
         handle.useragent(&options.useragent)?;
-        handle.http_headers(options.headers)?;
+        if !options.headers.is_empty() {
+            let mut list = List::new();
+            for header in options.headers.iter() {
+                list.append(header)?;
+            }
+            handle.http_headers(list)?;
+        }
 
         handle.url(url)?;
 
