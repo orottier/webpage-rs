@@ -2,7 +2,6 @@ extern crate webpage;
 
 #[cfg(feature = "curl")]
 use webpage::{html::HTML, Webpage, WebpageOptions};
-use curl::easy::List;
 use wiremock::{Mock, MockServer, ResponseTemplate};
 use wiremock::matchers::{header, method};
 
@@ -68,10 +67,8 @@ async fn from_url_with_headers() {
         .mount(&mock_server)
         .await;
 
-    let custom_header = "X-My-Header: 1234";
-    let mut my_headers = List::new();
-    my_headers.append(custom_header).unwrap();
-    let options = WebpageOptions { headers: my_headers, ..Default::default() };
+    let my_headers: Vec<String> = vec!["X-My-Header: 1234".to_string()];
+    let options = WebpageOptions { headers: my_headers, ..Default::default()};
     let url = &mock_server.uri();
     let webpage = Webpage::from_url(url, options);
     assert!(webpage.is_ok());
