@@ -69,6 +69,7 @@ pub use crate::schema_org::SchemaOrg;
 
 #[cfg(feature = "curl")]
 use std::time::Duration;
+use curl::easy::List;
 
 #[cfg(feature = "serde")]
 #[macro_use]
@@ -100,6 +101,8 @@ pub struct WebpageOptions {
     pub timeout: Duration,
     /// User agent string used for the request \[webpage-rs - <https://crates.io/crates/webpage>\]
     pub useragent: String,
+    /// Custom HTTP headers to send with the request
+    #[non_exhaustive] pub headers: List,
 }
 
 #[cfg(feature = "curl")]
@@ -111,6 +114,7 @@ impl Default for WebpageOptions {
             max_redirections: 5,
             timeout: Duration::from_secs(10),
             useragent: "webpage-rs - https://crates.io/crates/webpage".to_string(),
+            headers: List::new(),
         }
     }
 }

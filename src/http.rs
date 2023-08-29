@@ -51,6 +51,7 @@ impl HTTP {
         handle.follow_location(options.follow_location)?;
         handle.max_redirections(options.max_redirections)?;
         handle.useragent(&options.useragent)?;
+        handle.http_headers(options.headers)?;
 
         handle.url(url)?;
 
