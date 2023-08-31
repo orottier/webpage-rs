@@ -18,7 +18,3 @@ html5ever = "0.26.0"
 markup5ever_rcdom = "0.2.0"
 serde = { version = "1.0", optional = true, features = ["derive"] }
 serde_json = "1.0"
-
-[dev-dependencies]
-tokio = { version = "0.2", features = ["full", "macros"] }
-wiremock = "0.5"

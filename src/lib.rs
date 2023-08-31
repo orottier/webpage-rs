@@ -89,6 +89,7 @@ pub struct Webpage {
 #[derive(Debug)]
 #[cfg(feature = "curl")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct WebpageOptions {
     /// Allow fetching over invalid and/or self signed HTTPS connections \[false\]
     pub allow_insecure: bool,
