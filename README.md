@@ -118,9 +118,10 @@ pub struct WebpageOptions {
     max_redirections: 5,
     timeout: Duration::from_secs(10),
     useragent: "Webpage - Rust crate - https://crates.io/crates/webpage".to_string(),
+    headers: vec!["X-My-Header: 1234".to_string()],
 }
 
 // usage
-let options = WebpageOptions { allow_insecure: true, ..Default::default() };
+let options = WebpageOptions::default();
 let info = Webpage::from_url(&url, options).expect("Halp, could not fetch");
 ```
