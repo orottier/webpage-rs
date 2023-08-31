@@ -36,10 +36,8 @@ fn test_headers() {
     let url = format!("{}", socket.local_addr().unwrap());
     std::thread::spawn(move || {
         let my_headers: Vec<String> = vec!["X-My-Header: 1234".to_string()];
-        let options = WebpageOptions {
-            headers: my_headers,
-            ..Default::default()
-        };
+        let mut options = WebpageOptions::default();
+        options.headers = my_headers;
         let webpage = Webpage::from_url(&url, options);
         assert!(webpage.is_ok());
     });
