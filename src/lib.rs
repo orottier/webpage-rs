@@ -49,7 +49,7 @@
 //! ```
 //! use webpage::{Webpage, WebpageOptions};
 //!
-//! let options = WebpageOptions { allow_insecure: true, ..Default::default() };
+//! let options = WebpageOptions::default();
 //! let info = Webpage::from_url("https://example.org", options).expect("Halp, could not fetch");
 //! ```
 
