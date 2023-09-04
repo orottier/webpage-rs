@@ -122,6 +122,7 @@ pub struct WebpageOptions {
 }
 
 // usage
-let options = WebpageOptions::default();
+let mut options = WebpageOptions::default();
+options.allow_insecure = true;
 let info = Webpage::from_url(&url, options).expect("Halp, could not fetch");
 ```

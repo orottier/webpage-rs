@@ -49,7 +49,8 @@
 //! ```
 //! use webpage::{Webpage, WebpageOptions};
 //!
-//! let options = WebpageOptions::default();
+//! let mut options = WebpageOptions::default();
+//! options.allow_insecure = true;
 //! let info = Webpage::from_url("https://example.org", options).expect("Halp, could not fetch");
 //! ```
 
