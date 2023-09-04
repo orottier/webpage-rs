@@ -43,10 +43,11 @@
 //!     max_redirections: u32,
 //!     timeout: std::time::Duration,
 //!     useragent: String,
+//!     headers: Vec<String>,
 //! }
 //! ```
 //!
-//! ```
+//! ```rust
 //! use webpage::{Webpage, WebpageOptions};
 //!
 //! let mut options = WebpageOptions::default();
