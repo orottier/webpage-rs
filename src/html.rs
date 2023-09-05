@@ -24,6 +24,7 @@ pub struct HTML {
     pub description: Option<String>,
     /// Canonical URL
     pub url: Option<String>,
+    #[cfg(feature = "links")]
     pub url_parsed: Option<url::Url>,
     /// Feed URL (atom, rss, ..)
     pub feed: Option<String>,
@@ -45,11 +46,13 @@ pub struct HTML {
 
 impl HTML {
     fn empty(url: Option<String>) -> Self {
+        #[cfg(feature = "links")]
         let url_parsed = url.as_ref().and_then(|u| url::Url::parse(&u).ok());
         Self {
             title: None,
             description: None,
             url,
+            #[cfg(feature = "links")]
             url_parsed,
             feed: None,
 

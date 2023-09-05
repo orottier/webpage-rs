@@ -165,6 +165,7 @@ fn process_element(
         }
     }
 
+    #[cfg(feature = "links")]
     if tag_name == "a" {
         if let Some(href) = get_attribute(attrs, "href") {
             if let Some(url) = &html.url_parsed {
