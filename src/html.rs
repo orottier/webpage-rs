@@ -45,11 +45,7 @@ pub struct HTML {
 
 impl HTML {
     fn empty(url: Option<String>) -> Self {
-        let url_parsed = if let Some(url) = &url {
-            Some(url::Url::parse(&url).unwrap()) // TODO: get rid of unwrap
-        } else {
-            None
-        };
+        let url_parsed = url.as_ref().and_then(|u| url::Url::parse(&u).ok());
         Self {
             title: None,
             description: None,
