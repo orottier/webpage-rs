@@ -24,6 +24,7 @@ pub struct HTML {
     pub description: Option<String>,
     /// Canonical URL
     pub url: Option<String>,
+    pub url_parsed: Option<url::Url>,
     /// Feed URL (atom, rss, ..)
     pub feed: Option<String>,
 
@@ -38,14 +39,22 @@ pub struct HTML {
     pub opengraph: Opengraph,
     /// Schema.org data
     pub schema_org: Vec<SchemaOrg>,
+    /// All links in the document
+    pub links: Vec<String>,
 }
 
 impl HTML {
     fn empty(url: Option<String>) -> Self {
+        let url_parsed = if let Some(url) = &url {
+            Some(url::Url::parse(&url).unwrap()) // TODO: get rid of unwrap
+        } else {
+            None
+        };
         Self {
             title: None,
             description: None,
             url,
+            url_parsed,
             feed: None,
 
             language: None,
@@ -54,6 +63,7 @@ impl HTML {
             meta: HashMap::new(),
             opengraph: Opengraph::empty(),
             schema_org: Vec::new(),
+            links: Vec::new(),
         }
     }
 
