@@ -164,6 +164,20 @@ fn process_element(
             }
         }
     }
+
+    if tag_name == "a" {
+        if let Some(href) = get_attribute(attrs, "href") {
+            if let Some(url) = &html.url_parsed {
+                if let Ok(url) = url.join(&href) {
+                    html.links.push(url.to_string());
+                } else {
+                    html.links.push(href);
+                }
+            } else {
+                html.links.push(href);
+            }
+        }
+    }
 }
 
 fn get_attribute(attrs: &[Attribute], name: &str) -> Option<String> {
