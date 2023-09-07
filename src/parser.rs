@@ -2,7 +2,7 @@ use html5ever::tendril::{fmt::UTF8, Tendril};
 use html5ever::Attribute;
 use markup5ever_rcdom::{Handle, NodeData};
 
-use crate::html::HTML;
+use crate::html::{HTML, Link};
 use crate::schema_org::SchemaOrg;
 
 #[derive(Copy, Clone)]
@@ -135,7 +135,7 @@ fn process_element(
         if tag_name == "link" {
             let rel = get_attribute(attrs, "rel").unwrap_or_default();
             if rel == "canonical" {
-                html.url = get_attribute(attrs, "href");
+                html.set_url(get_attribute(attrs, "href"));
             } else if rel == "alternate" {
                 let link_type = get_attribute(attrs, "type").unwrap_or_default();
                 if vec![
@@ -165,18 +165,19 @@ fn process_element(
         }
     }
 
-    #[cfg(feature = "links")]
     if tag_name == "a" {
         if let Some(href) = get_attribute(attrs, "href") {
-            if let Some(url) = &html.url_parsed {
+            let text = text_content(handle);
+            let href = if let Some(url) = &html.url_parsed {
                 if let Ok(url) = url.join(&href) {
-                    html.links.push(url.to_string());
+                    url.to_string()
                 } else {
-                    html.links.push(href);
+                    href
                 }
             } else {
-                html.links.push(href);
-            }
+                href
+            };
+            html.links.push(Link { url: href, text });
         }
     }
 }

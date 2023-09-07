@@ -11,7 +11,7 @@ edition = "2018"
 
 [features]
 default = ["curl"]
-links = ["url"]
+serde = ["dep:serde"]
 
 [dependencies]
 curl = { version = "0.4.41", optional = true }
@@ -19,4 +19,4 @@ html5ever = "0.26.0"
 markup5ever_rcdom = "0.2.0"
 serde = { version = "1.0", optional = true, features = ["derive"] }
 serde_json = "1.0"
-url = { version = "2", optional = true }
+url = { version = "2" }
