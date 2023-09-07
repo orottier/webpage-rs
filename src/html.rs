@@ -24,7 +24,6 @@ pub struct HTML {
     pub description: Option<String>,
     /// Canonical URL
     pub url: Option<String>,
-    #[cfg(feature = "links")]
     #[cfg_attr(feature = "serde", serde(skip))]
     pub url_parsed: Option<url::Url>,
     /// Feed URL (atom, rss, ..)
@@ -42,18 +41,16 @@ pub struct HTML {
     /// Schema.org data
     pub schema_org: Vec<SchemaOrg>,
     /// All links in the document
-    pub links: Vec<String>,
+    pub links: Vec<Link>,
 }
 
 impl HTML {
     fn empty(url: Option<String>) -> Self {
-        #[cfg(feature = "links")]
         let url_parsed = url.as_ref().and_then(|u| url::Url::parse(&u).ok());
         Self {
             title: None,
             description: None,
             url,
-            #[cfg(feature = "links")]
             url_parsed,
             feed: None,
 
@@ -100,6 +97,11 @@ impl HTML {
             .read_from(&mut html.as_bytes())
             .map(|dom| Self::from_dom(dom, url))
     }
+
+    pub fn set_url(&mut self, url: Option<String>) {
+        self.url_parsed = url.as_ref().and_then(|url| url::Url::parse(url.as_str()).ok());
+        self.url = url;
+    }
 }
 
 #[cfg(test)]
@@ -117,4 +119,11 @@ mod tests {
         assert!(html.description.is_none());
         assert_eq!(html.text_content, "Contents".to_string());
     }
+}
+
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct Link {
+    pub url: String,
+    pub text: Option<String>,
 }
