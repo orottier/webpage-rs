@@ -138,7 +138,7 @@ fn process_element(
                 html.set_url(get_attribute(attrs, "href"));
             } else if rel == "alternate" {
                 let link_type = get_attribute(attrs, "type").unwrap_or_default();
-                if vec![
+                if [
                     "application/atom+xml",
                     "application/json",
                     "application/rdf+xml",
