@@ -2,7 +2,7 @@ use html5ever::tendril::{fmt::UTF8, Tendril};
 use html5ever::Attribute;
 use markup5ever_rcdom::{Handle, NodeData};
 
-use crate::html::{HTML, Link};
+use crate::html::{Link, HTML};
 use crate::schema_org::SchemaOrg;
 
 #[derive(Copy, Clone)]
@@ -167,7 +167,7 @@ fn process_element(
 
     if tag_name == "a" {
         if let Some(href) = get_attribute(attrs, "href") {
-            let text = text_content(handle);
+            let text = text_content(handle).unwrap_or_default();
             let href = if let Some(url) = &html.url_parsed {
                 if let Ok(url) = url.join(&href) {
                     url.to_string()
