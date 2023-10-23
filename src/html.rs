@@ -1,15 +1,15 @@
 //! Info from the parsed HTML document
 
+use html5ever::driver::ParseOpts;
 use html5ever::parse_document;
 use html5ever::tendril::TendrilSink;
+use markup5ever_rcdom::RcDom;
+use url::Url;
 
 use std::collections::HashMap;
 use std::default::Default;
 use std::io;
 use std::path::Path;
-
-use html5ever::driver::ParseOpts;
-use markup5ever_rcdom::RcDom;
 
 use crate::opengraph::Opengraph;
 use crate::parser::Parser;
@@ -25,7 +25,7 @@ pub struct HTML {
     /// Canonical URL
     pub url: Option<String>,
     #[cfg_attr(feature = "serde", serde(skip))]
-    pub url_parsed: Option<url::Url>,
+    pub url_parsed: Option<Url>,
     /// Feed URL (atom, rss, ..)
     pub feed: Option<String>,
 
@@ -46,7 +46,7 @@ pub struct HTML {
 
 impl HTML {
     fn empty(url: Option<String>) -> Self {
-        let url_parsed = url.as_ref().and_then(|u| url::Url::parse(&u).ok());
+        let url_parsed = url.as_ref().and_then(|u| Url::parse(u).ok());
         Self {
             title: None,
             description: None,
@@ -98,32 +98,40 @@ impl HTML {
             .map(|dom| Self::from_dom(dom, url))
     }
 
-    pub fn set_url(&mut self, url: Option<String>) {
-        self.url_parsed = url.as_ref().and_then(|url| url::Url::parse(url.as_str()).ok());
+    pub(crate) fn set_url(&mut self, url: Option<String>) {
+        self.url_parsed = url.as_ref().and_then(|url| Url::parse(url).ok());
         self.url = url;
     }
 }
 
+#[derive(Debug, Clone, Eq, PartialEq, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct Link {
+    pub url: String,
+    pub text: String,
+}
+
 #[cfg(test)]
 mod tests {
-    use super::HTML;
+    use super::*;
 
     #[test]
     fn from_string() {
-        let input = "<html><head><title>Hello</title></head><body>Contents".to_string();
-        let html = HTML::from_string(input, None);
+        let input = "<html><head><title>Hello</title></head><body>Contents <a href='/a'>Link</a>"
+            .to_string();
+        let html = HTML::from_string(input, Some("https://example.com/".into()));
         assert!(html.is_ok());
 
         let html = html.unwrap();
         assert_eq!(html.title, Some("Hello".to_string()));
         assert!(html.description.is_none());
-        assert_eq!(html.text_content, "Contents".to_string());
+        assert_eq!(html.text_content, "Contents  Link".to_string());
+        assert_eq!(
+            html.links,
+            vec![Link {
+                url: "https://example.com/a".into(),
+                text: "Link".into()
+            }]
+        );
     }
-}
-
-#[derive(Debug, Clone)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Link {
-    pub url: String,
-    pub text: Option<String>,
 }
