@@ -39,6 +39,8 @@ jobs:
 
     # run clippy to verify we have no warnings
     - name: cargo clippy
+      env:
+        RUSTDOCFLAGS: -D warnings
       run: cargo clippy --all-targets --all-features
 
     # check for rustdoc warnings
