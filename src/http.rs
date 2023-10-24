@@ -7,6 +7,7 @@ use curl::easy::{Easy, List};
 
 use crate::WebpageOptions;
 
+/// Information regarding the HTTP transfer
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]

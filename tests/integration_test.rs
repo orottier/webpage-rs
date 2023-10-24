@@ -4,7 +4,7 @@ use std::io::{Read, Write};
 use std::net::TcpListener;
 
 #[cfg(feature = "curl")]
-use webpage::{html::HTML, Webpage, WebpageOptions};
+use webpage::{Webpage, WebpageOptions, HTML};
 
 #[test]
 fn from_file() {

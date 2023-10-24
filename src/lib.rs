@@ -56,19 +56,21 @@
 //! let info = Webpage::from_url("https://example.org", options).expect("Halp, could not fetch");
 //! ```
 
-pub mod html;
+mod html;
+pub use html::{Link, HTML};
+
 #[cfg(feature = "curl")]
-pub mod http;
-pub mod opengraph;
-pub mod schema_org;
+mod http;
+#[cfg(feature = "curl")]
+pub use http::HTTP;
+
+mod opengraph;
+pub use opengraph::{Opengraph, OpengraphObject};
+
+mod schema_org;
+pub use schema_org::SchemaOrg;
 
 mod parser;
-
-pub use crate::html::HTML;
-#[cfg(feature = "curl")]
-pub use crate::http::HTTP;
-pub use crate::opengraph::{Opengraph, OpengraphObject};
-pub use crate::schema_org::SchemaOrg;
 
 #[cfg(feature = "curl")]
 use std::time::Duration;
@@ -77,7 +79,7 @@ use std::time::Duration;
 #[macro_use]
 extern crate serde;
 
-/// Resulting info for a webpage
+/// All gathered info for a webpage
 #[derive(Debug)]
 #[cfg(feature = "curl")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -89,7 +91,7 @@ pub struct Webpage {
     pub html: HTML,
 }
 
-/// Configuration options
+/// Configuration options for fetching a webpage
 #[derive(Debug)]
 #[cfg(feature = "curl")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]

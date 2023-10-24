@@ -23,7 +23,7 @@ pub struct Opengraph {
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
-/// Info about a media type
+/// Info about an OpenGraph media type
 pub struct OpengraphObject {
     /// URL describing this object
     pub url: String,

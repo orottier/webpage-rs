@@ -15,6 +15,7 @@ use crate::opengraph::Opengraph;
 use crate::parser::Parser;
 use crate::schema_org::SchemaOrg;
 
+/// Information regarding the HTML content
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
@@ -66,7 +67,7 @@ impl HTML {
     }
 
     /// Construct HTML from RcDom, optionally with a URL set
-    pub fn from_dom(dom: RcDom, url: Option<String>) -> Self {
+    fn from_dom(dom: RcDom, url: Option<String>) -> Self {
         let mut html = Self::empty(url);
         let parser = Parser::start(dom.document);
         parser.traverse(&mut html);
@@ -105,6 +106,7 @@ impl HTML {
     }
 }
 
+/// Information for an `<a>` anchor
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
