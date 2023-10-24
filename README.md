@@ -1,8 +1,10 @@
 # Webpage.rs
 
 [![crates.io](https://img.shields.io/crates/v/webpage.svg)](https://crates.io/crates/webpage)
+[![docs.rs](https://img.shields.io/docsrs/webpage)](https://docs.rs/webpage)
 
-_Small library to fetch info about a web page: title, description, language, HTTP info, links, RSS feeds, Opengraph, Schema.org, and more_
+_Small library to fetch info about a web page: title, description, language,
+HTTP info, links, RSS feeds, Opengraph, Schema.org, and more_
 
 ## Usage
 
@@ -41,15 +43,18 @@ let html = HTML::from_file("index.html", None);
 
 ### Serialization
 
-If you need to be able to serialize the data provided by the library using [serde](https://serde.rs/), you can include specify the `serde` *feature* while declaring your dependencies in `Cargo.toml`:
+If you need to be able to serialize the data provided by the library using
+[serde](https://serde.rs/), you can include specify the `serde` *feature* while
+declaring your dependencies in `Cargo.toml`:
 
 ```toml
-webpage = { version = "1.1", features = ["serde"] }
+webpage = { version = "2.0", features = ["serde"] }
 ```
 
 ### No curl dependency
 
-The `curl` feature is enabled by default but is optional. This is useful if you do not need a HTTP client but already have the HTML data at hand.
+The `curl` feature is enabled by default but is optional. This is useful if you
+do not need a HTTP client but already have the HTML data at hand.
 
 ## All fields
 
@@ -116,7 +121,8 @@ pub struct SchemaOrg {
 
 ## Options
 
-The following configurations are available:
+The following HTTP configurations are available:
+
 ```rust
 pub struct WebpageOptions {
     allow_insecure: false,
