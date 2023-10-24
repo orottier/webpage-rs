@@ -1,10 +1,11 @@
 # Version History
 
-## Version 2.0.0-alpha.2 (2023-10-24)
+## Version 2.0.0
 
-- Collect all links of the HTML document
+Breaking:
+- Changed all structs to be `non_exhaustive`
+- Moved all structs to the crate root (no re-exports)
 
-## Version 2.0.0-alpha.1 (2023-09-04)
-
-- Changed WebpageOptions struct to `non_exhaustive`
+New features:
 - Added the ability to specify HTTP request headers
+- Collect all links/anchors of the HTML document
