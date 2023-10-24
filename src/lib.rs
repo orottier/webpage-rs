@@ -81,6 +81,7 @@ extern crate serde;
 #[derive(Debug)]
 #[cfg(feature = "curl")]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct Webpage {
     /// info about the HTTP transfer
     pub http: HTTP,

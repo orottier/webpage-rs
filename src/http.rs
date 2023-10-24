@@ -9,6 +9,7 @@ use crate::WebpageOptions;
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct HTTP {
     /// The external ip address (v4 or v6)
     pub ip: String,

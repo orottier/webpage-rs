@@ -17,6 +17,7 @@ use crate::schema_org::SchemaOrg;
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct HTML {
     /// \<title\>
     pub title: Option<String>,
@@ -106,6 +107,7 @@ impl HTML {
 
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 pub struct Link {
     pub url: String,
     pub text: String,

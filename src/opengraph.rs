@@ -4,6 +4,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 /// Representing [OpenGraph](http://ogp.me/) information
 pub struct Opengraph {
     /// Opengraph type (article, image, event, ..)
@@ -21,6 +22,7 @@ pub struct Opengraph {
 
 #[derive(Debug, Clone)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[non_exhaustive]
 /// Info about a media type
 pub struct OpengraphObject {
     /// URL describing this object
