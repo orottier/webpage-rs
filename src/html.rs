@@ -27,7 +27,7 @@ pub struct HTML {
     /// Canonical URL
     pub url: Option<String>,
     #[cfg_attr(feature = "serde", serde(skip))]
-    pub url_parsed: Option<Url>,
+    pub(crate) url_parsed: Option<Url>,
     /// Feed URL (atom, rss, ..)
     pub feed: Option<String>,
 
