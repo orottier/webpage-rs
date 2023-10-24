@@ -2,7 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/webpage.svg)](https://crates.io/crates/webpage)
 
-_Small library to fetch info about a web page: title, description, language, HTTP info, RSS feeds, Opengraph, Schema.org, and more_
+_Small library to fetch info about a web page: title, description, language, HTTP info, links, RSS feeds, Opengraph, Schema.org, and more_
 
 ## Usage
 
@@ -79,11 +79,17 @@ pub struct HTML {
 
     pub language: Option<String>, // as specified, not detected
     pub text_content: String, // all tags stripped from body
+    pub links: Vec<Link>, // all links in the document
 
     pub meta: HashMap<String, String>, // flattened down list of meta properties
 
     pub opengraph: Opengraph,
     pub schema_org: Vec<SchemaOrg>,
+}
+
+pub struct Link {
+    pub url: String, // resolved url of the link
+    pub text: String, // anchor text
 }
 
 pub struct Opengraph {

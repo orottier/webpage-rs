@@ -1,4 +1,4 @@
-//! _Small library to fetch info about a web page: title, description, language, HTTP info, RSS feeds, Opengraph, Schema.org, and more_
+//! _Small library to fetch info about a web page: title, description, language, HTTP info, links, RSS feeds, Opengraph, Schema.org, and more_
 //!
 //! ## Usage
 //!
@@ -22,6 +22,7 @@
 //!
 //! assert_eq!(html.title, Some("Example Domain".to_string()));
 //! assert_eq!(html.description, None);
+//! assert_eq!(html.links.len(), 1);
 //! assert_eq!(html.opengraph.og_type, "website".to_string());
 //! ```
 //!
