@@ -1,4 +1,4 @@
-name: Build
+name: MSRV
 
 # read-only repo token
 # no access to secrets
@@ -19,7 +19,8 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Install rust
-      uses: dtolnay/rust-toolchain@stable
+      # Aligned with `rust-version` in `Cargo.toml`
+      uses: dtolnay/rust-toolchain@1.60
       with:
         components: clippy, rustfmt
 
@@ -36,23 +37,3 @@ jobs:
     # check it builds
     - name: Build
       run: cargo build --locked --verbose --all-targets --all-features
-
-    # run tests
-    - name: Run tests
-      run: cargo test --verbose --all-features
-
-    # make sure all code has been formatted with rustfmt
-    - name: check rustfmt
-      run: cargo fmt -- --check --color always
-
-    # run clippy to verify we have no warnings
-    - name: cargo clippy
-      env:
-        RUSTDOCFLAGS: -D warnings
-      run: cargo clippy --all-targets --all-features
-
-    # check for rustdoc warnings
-    - name: generate and verify rustdoc
-      env:
-        RUSTDOCFLAGS: -D warnings
-      run: cargo doc --no-deps --document-private-items --workspace --all-features

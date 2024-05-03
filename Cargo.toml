@@ -3,11 +3,13 @@ name = "webpage"
 description = "Small library to fetch info about a web page: title, description, language, HTTP info, links, RSS feeds, Opengraph, Schema.org, and more"
 readme = "README.md"
 keywords = ["webpage", "html", "opengraph"]
+categories = ["web-programming"]
 license = "MIT"
 version = "2.0.0"
 authors = ["Otto <otto@ot-to.nl>"]
 repository = "https://github.com/orottier/webpage-rs"
 edition = "2021"
+rust-version = "1.60"
 
 [features]
 default = ["curl"]
