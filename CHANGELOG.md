@@ -1,5 +1,10 @@
 # Version History
 
+## Version 2.0.1
+
+- Specified the MSRV rust-version (1.63)
+- Updated dependencies
+
 ## Version 2.0.0
 
 Breaking:
