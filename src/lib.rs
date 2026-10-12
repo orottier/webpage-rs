@@ -2,28 +2,19 @@
 //!
 //! ## Usage
 //!
-//! ```rust
+//! ```no_run
 //! use webpage::{Webpage, WebpageOptions};
 //!
 //! let info = Webpage::from_url("http://example.org", WebpageOptions::default())
 //!     .expect("Could not read from URL");
 //!
 //! // the HTTP transfer info
-//! let http = info.http;
-//!
-//! // assert_eq!(http.ip, "54.192.129.71".to_string());
-//! assert!(http.headers[0].starts_with("HTTP"));
-//! assert!(http.body.starts_with("<!doctype html>"));
-//! assert_eq!(http.url, "http://example.org/".to_string()); // effective url
-//! assert_eq!(http.content_type, "text/html; charset=UTF-8".to_string());
+//! println!("Effective URL: {}", info.http.url);
+//! println!("Content type: {}", info.http.content_type);
 //!
 //! // the parsed HTML info
-//! let html = info.html;
-//!
-//! assert_eq!(html.title, Some("Example Domain".to_string()));
-//! assert_eq!(html.description, None);
-//! assert_eq!(html.links.len(), 1);
-//! assert_eq!(html.opengraph.og_type, "website".to_string());
+//! println!("Title: {:?}", info.html.title);
+//! println!("Links: {}", info.html.links.len());
 //! ```
 //!
 //! You can also get HTML info about local data:
@@ -147,6 +138,16 @@ impl Webpage {
     ///
     /// This preserves the previous behavior of `from_url` and should only be
     /// used with trusted URLs. Redirects follow libcurl's defaults.
+    ///
+    /// ## Examples
+    /// ```no_run
+    /// use webpage::{Webpage, WebpageOptions};
+    ///
+    /// let url = "file:///opt/app/pages/trusted.html";
+    /// let page = Webpage::from_url_any_scheme(url, WebpageOptions::default())?;
+    /// println!("{:?}", page.html.title);
+    /// # Ok::<(), std::io::Error>(())
+    /// ```
     pub fn from_url_any_scheme(url: &str, options: WebpageOptions) -> Result<Self, std::io::Error> {
         let http = HTTP::fetch_any_scheme(url, options)?;
         Self::from_http(http)

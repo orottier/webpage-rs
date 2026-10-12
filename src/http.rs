@@ -64,6 +64,16 @@ impl HTTP {
     ///
     /// This preserves the previous behavior of `fetch` and should only be used
     /// with trusted URLs. Redirects follow libcurl's defaults.
+    ///
+    /// ## Examples
+    /// ```no_run
+    /// use webpage::{HTTP, WebpageOptions};
+    ///
+    /// let url = "file:///opt/app/pages/trusted.html";
+    /// let response = HTTP::fetch_any_scheme(url, WebpageOptions::default())?;
+    /// println!("{}", response.body);
+    /// # Ok::<(), std::io::Error>(())
+    /// ```
     pub fn fetch_any_scheme(url: &str, options: WebpageOptions) -> Result<Self, io::Error> {
         let mut handle = Easy::new();
 
