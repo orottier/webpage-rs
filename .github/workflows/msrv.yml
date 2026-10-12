@@ -20,7 +20,7 @@ jobs:
 
     - name: Install rust
       # Aligned with `rust-version` in `Cargo.toml`
-      uses: dtolnay/rust-toolchain@1.63
+      uses: dtolnay/rust-toolchain@1.88
 
     - name: Generate Cargo.lock
       run: cargo generate-lockfile

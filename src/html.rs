@@ -140,6 +140,38 @@ mod tests {
     }
 
     #[test]
+    fn parses_metadata_and_links() {
+        let input = r#"<!doctype html><html lang="nl"><head>
+            <title>Tom &amp; Jerry</title>
+            <meta name="description" content="A short description">
+            <meta property="og:type" content="article">
+            <link rel="canonical" href="https://example.org/articles/one">
+            <link rel="alternate" type="application/rss+xml" href="/feed.xml">
+            <script type="application/ld+json">{"@type":"NewsArticle"}</script>
+        </head><body><a href="next">Next</a></body></html>"#;
+
+        let html =
+            HTML::from_string(input.to_string(), Some("https://example.org/".into())).unwrap();
+        assert_eq!(html.title.as_deref(), Some("Tom & Jerry"));
+        assert_eq!(html.description.as_deref(), Some("A short description"));
+        assert_eq!(html.language.as_deref(), Some("nl"));
+        assert_eq!(
+            html.url.as_deref(),
+            Some("https://example.org/articles/one")
+        );
+        assert_eq!(html.feed.as_deref(), Some("/feed.xml"));
+        assert_eq!(html.opengraph.og_type, "article");
+        assert_eq!(html.schema_org[0].schema_type, "NewsArticle");
+        assert_eq!(
+            html.links,
+            vec![Link {
+                url: "https://example.org/articles/next".into(),
+                text: "Next".into(),
+            }]
+        );
+    }
+
+    #[test]
     fn malformed_opengraph_media_property_does_not_panic() {
         let input = r#"<html><head>
             <meta property="og:image" content="https://example.org/image.png">
