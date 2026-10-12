@@ -1,5 +1,13 @@
 # Version History
 
+## Unreleased
+
+Breaking:
+- Reject non-HTTP(S) and scheme-less initial URLs in `HTTP::fetch` and `Webpage::from_url`. Use `HTTP::fetch_any_scheme` or `Webpage::from_url_any_scheme` to retain the previous behavior for trusted URLs. Redirects continue to follow libcurl's defaults.
+
+Fixes:
+- Avoid a panic when parsing malformed OpenGraph media properties.
+
 ## Version 2.0.1
 
 - Specified the MSRV rust-version (1.63)
