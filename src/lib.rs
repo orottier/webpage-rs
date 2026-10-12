@@ -127,7 +127,9 @@ impl Default for WebpageOptions {
 
 #[cfg(feature = "curl")]
 impl Webpage {
-    /// Fetch a webpage from the given URL, and extract HTML info
+    /// Fetch a webpage from an HTTP or HTTPS URL, and extract HTML info.
+    ///
+    /// Only the initial URL is restricted. Redirects follow libcurl's defaults.
     ///
     /// ## Examples
     /// ```
@@ -138,7 +140,19 @@ impl Webpage {
     /// ```
     pub fn from_url(url: &str, options: WebpageOptions) -> Result<Self, std::io::Error> {
         let http = HTTP::fetch(url, options)?;
+        Self::from_http(http)
+    }
 
+    /// Fetch using any initial URL scheme supported by libcurl, and extract HTML info.
+    ///
+    /// This preserves the previous behavior of `from_url` and should only be
+    /// used with trusted URLs. Redirects follow libcurl's defaults.
+    pub fn from_url_any_scheme(url: &str, options: WebpageOptions) -> Result<Self, std::io::Error> {
+        let http = HTTP::fetch_any_scheme(url, options)?;
+        Self::from_http(http)
+    }
+
+    fn from_http(http: HTTP) -> Result<Self, std::io::Error> {
         let html = HTML::from_string(http.body.clone(), Some(http.url.clone()))?;
 
         Ok(Self { http, html })

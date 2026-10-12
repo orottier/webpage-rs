@@ -4,6 +4,7 @@ use std::io;
 use std::time::Duration;
 
 use curl::easy::{Easy, List};
+use url::Url;
 
 use crate::WebpageOptions;
 
@@ -31,7 +32,9 @@ pub struct HTTP {
 }
 
 impl HTTP {
-    /// Fetch a webpage from the given URL
+    /// Fetch a webpage from an HTTP or HTTPS URL.
+    ///
+    /// Only the initial URL is restricted. Redirects follow libcurl's defaults.
     ///
     /// ## Examples
     /// ```
@@ -45,6 +48,23 @@ impl HTTP {
     /// assert!(info.is_err());
     /// ```
     pub fn fetch(url: &str, options: WebpageOptions) -> Result<Self, io::Error> {
+        let parsed =
+            Url::parse(url).map_err(|error| io::Error::new(io::ErrorKind::InvalidInput, error))?;
+        if !matches!(parsed.scheme(), "http" | "https") {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidInput,
+                "URL scheme must be HTTP or HTTPS",
+            ));
+        }
+
+        Self::fetch_any_scheme(url, options)
+    }
+
+    /// Fetch a URL using any initial scheme supported by libcurl.
+    ///
+    /// This preserves the previous behavior of `fetch` and should only be used
+    /// with trusted URLs. Redirects follow libcurl's defaults.
+    pub fn fetch_any_scheme(url: &str, options: WebpageOptions) -> Result<Self, io::Error> {
         let mut handle = Easy::new();
 
         // configure
