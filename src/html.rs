@@ -138,4 +138,24 @@ mod tests {
             }]
         );
     }
+
+    #[test]
+    fn malformed_opengraph_media_property_does_not_panic() {
+        let input = r#"<html><head>
+            <meta property="og:image" content="https://example.org/image.png">
+            <meta property="og:imageé" content="ignored">
+            <meta property="og:video" content="https://example.org/video.mp4">
+            <meta property="og:videoé" content="ignored">
+            <meta property="og:audio" content="https://example.org/audio.mp3">
+            <meta property="og:audioé" content="ignored">
+        </head></html>"#;
+
+        let html = HTML::from_string(input.to_string(), None).unwrap();
+        assert_eq!(html.opengraph.images.len(), 1);
+        assert_eq!(html.opengraph.videos.len(), 1);
+        assert_eq!(html.opengraph.audios.len(), 1);
+        assert!(html.opengraph.images[0].properties.is_empty());
+        assert!(html.opengraph.videos[0].properties.is_empty());
+        assert!(html.opengraph.audios[0].properties.is_empty());
+    }
 }

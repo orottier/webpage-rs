@@ -73,15 +73,17 @@ fn parse_object(
     content: String,
     collection: &mut Vec<OpengraphObject>,
 ) {
-    let num_images = collection.len();
-
-    if property == og_type || &property[og_type.len()..] == ":url" {
+    if property == og_type || property.strip_prefix(og_type) == Some(":url") {
         collection.push(OpengraphObject::new(content));
-    } else if num_images > 0 && property.len() > og_type.len() + 1 {
-        let property = &property["image:".len()..];
-        collection[num_images - 1]
-            .properties
-            .insert(property.to_string(), content);
+    } else if let Some(property) = property
+        .strip_prefix(og_type)
+        .and_then(|suffix| suffix.strip_prefix(':'))
+    {
+        if !property.is_empty() {
+            if let Some(object) = collection.last_mut() {
+                object.properties.insert(property.to_string(), content);
+            }
+        }
     }
 }
 
