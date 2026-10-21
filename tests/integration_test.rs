@@ -58,7 +58,7 @@ fn test_headers() {
         let my_headers: Vec<String> = vec!["X-My-Header: 1234".to_string()];
         let mut options = WebpageOptions::default();
         options.headers = my_headers;
-        let webpage = Webpage::from_url(&url, options);
+        let webpage = Webpage::from_url_unrestricted(&url, options);
         assert!(webpage.is_ok());
     });
     let mut stream = socket.accept().unwrap().0;
@@ -83,11 +83,11 @@ fn test_headers() {
 
 #[test]
 #[cfg(feature = "curl")]
-fn from_url_any_scheme_accepts_scheme_less_url() {
+fn from_url_unrestricted_accepts_scheme_less_url() {
     let socket = TcpListener::bind("127.0.0.1:0").unwrap();
     let url = socket.local_addr().unwrap().to_string();
     let task =
-        std::thread::spawn(move || Webpage::from_url_any_scheme(&url, WebpageOptions::default()));
+        std::thread::spawn(move || Webpage::from_url_unrestricted(&url, WebpageOptions::default()));
 
     let (mut stream, _) = socket.accept().unwrap();
     let mut request = [0; 1024];
@@ -101,4 +101,22 @@ fn from_url_any_scheme_accepts_scheme_less_url() {
 
     let webpage = task.join().unwrap().unwrap();
     assert_eq!(webpage.http.response_code, 200);
+}
+
+#[test]
+#[cfg(feature = "curl")]
+fn default_fetch_rejects_loopback_before_connecting() {
+    let socket = TcpListener::bind("127.0.0.1:0").unwrap();
+    let url = format!("http://{}", socket.local_addr().unwrap());
+
+    let error = HTTP::fetch(&url, WebpageOptions::default()).unwrap_err();
+    assert_eq!(error.kind(), std::io::ErrorKind::PermissionDenied);
+    let error = Webpage::from_url(&url, WebpageOptions::default()).unwrap_err();
+    assert_eq!(error.kind(), std::io::ErrorKind::PermissionDenied);
+
+    socket.set_nonblocking(true).unwrap();
+    assert_eq!(
+        socket.accept().unwrap_err().kind(),
+        std::io::ErrorKind::WouldBlock
+    );
 }

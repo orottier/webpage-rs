@@ -56,15 +56,15 @@ webpage = { version = "2.0", features = ["serde"] }
 The `curl` feature is enabled by default but is optional. This is useful if you
 do not need a HTTP client but already have the HTML data at hand.
 
-### URL schemes
+### URL schemes and security
 
-`HTTP::fetch` and `Webpage::from_url` require an explicit `http://` or `https://`
-URL. Other schemes and scheme-less URLs return `InvalidInput`. For trusted URLs
-that need libcurl's previous scheme support, use `HTTP::fetch_any_scheme` or
-`Webpage::from_url_any_scheme`.
+`HTTP::fetch` and `Webpage::from_url` require an explicit HTTP or HTTPS scheme;
+other schemes and scheme-less URLs are rejected. URLs are rejected if any
+resolved address is non-public, including private, loopback, and link-local
+addresses. Redirects are checked for these constraints too
 
-The restriction applies only to the initial URL. Redirects still follow
-libcurl's defaults, and HTTP(S) URLs can still reach private network hosts.
+For trusted URLs that need libcurl's scheme, address, proxy, and redirect
+behavior, use `HTTP::fetch_unrestricted` or `Webpage::from_url_unrestricted`.
 
 ## All fields
 

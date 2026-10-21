@@ -2,7 +2,18 @@
 
 ## Unreleased
 
-- Reject non-HTTP(S) URLs in `HTTP::fetch` and `Webpage::from_url`
+### Security patch / behaviorally breaking
+
+Restricted `HTTP::fetch` and `Webpage::from_url` to public HTTP(S) destinations
+
+- URLs must have an explicit HTTP or HTTPS scheme; other schemes and scheme-less URLs are rejected.
+- URLs are rejected if any resolved address is non-public, including private, loopback, and link-local addresses.
+- Redirects are checked for these constraints too
+
+Use `HTTP::fetch_unrestricted` or `Webpage::from_url_unrestricted` to avoid the checks for trusted URLs.
+
+### Other changes
+
 - Avoid a panic when parsing malformed OpenGraph media properties
 - Raise the minimum supported Rust version to 1.88
 - Update `html5ever` and `markup5ever_rcdom` dependencies

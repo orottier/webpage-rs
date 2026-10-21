@@ -118,9 +118,9 @@ impl Default for WebpageOptions {
 
 #[cfg(feature = "curl")]
 impl Webpage {
-    /// Fetch a webpage from an HTTP or HTTPS URL, and extract HTML info.
+    /// Fetch a public HTTP or HTTPS webpage, and extract HTML info.
     ///
-    /// Only the initial URL is restricted. Redirects follow libcurl's defaults.
+    /// The initial URL and every redirect must use HTTP(S) and must resolve to a public ip address.
     ///
     /// ## Examples
     /// ```
@@ -134,22 +134,24 @@ impl Webpage {
         Self::from_http(http)
     }
 
-    /// Fetch using any initial URL scheme supported by libcurl, and extract HTML info.
+    /// Fetch without scheme or destination-address restrictions, and extract HTML info.
     ///
-    /// This preserves the previous behavior of `from_url` and should only be
-    /// used with trusted URLs. Redirects follow libcurl's defaults.
+    /// This should only be used with trusted URLs. Redirects follow libcurl's defaults.
     ///
     /// ## Examples
     /// ```no_run
     /// use webpage::{Webpage, WebpageOptions};
     ///
     /// let url = "file:///opt/app/pages/trusted.html";
-    /// let page = Webpage::from_url_any_scheme(url, WebpageOptions::default())?;
+    /// let page = Webpage::from_url_unrestricted(url, WebpageOptions::default())?;
     /// println!("{:?}", page.html.title);
     /// # Ok::<(), std::io::Error>(())
     /// ```
-    pub fn from_url_any_scheme(url: &str, options: WebpageOptions) -> Result<Self, std::io::Error> {
-        let http = HTTP::fetch_any_scheme(url, options)?;
+    pub fn from_url_unrestricted(
+        url: &str,
+        options: WebpageOptions,
+    ) -> Result<Self, std::io::Error> {
+        let http = HTTP::fetch_unrestricted(url, options)?;
         Self::from_http(http)
     }
 
