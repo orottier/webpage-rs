@@ -1,6 +1,6 @@
 # Version History
 
-## Unreleased
+## Version 2.1.0
 
 ### Security patch / behaviorally breaking
 
